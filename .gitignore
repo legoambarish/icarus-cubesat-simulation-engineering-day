@@ -25,3 +25,6 @@ openmct/node_modules/
 
 # Cross-compiled binary (rebuild with: make -C fsw)
 fsw/icarus.exe
+
+# The original specification PDF is kept locally, not published
+CubeSat simulation/
