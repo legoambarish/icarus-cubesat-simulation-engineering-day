@@ -103,16 +103,50 @@ export function createHud(container: HTMLElement, handlers: HudHandlers): Hud {
     statusBar.root,
   );
 
-  // Entry animation: plates fade up once, staggered. Pure polish - nothing
-  // functional depends on it.
-  [identity, viewControls.root, viewControls.list, profile.root, telemetry.root, statusBar.root]
-    .forEach((node, i) => {
+  /*
+   * Entry animation: plates fade up once, staggered.
+   *
+   * It is PURE POLISH, and it is written so that it can never cost visibility.
+   * An opacity keyframe starting at 0 writes an inline opacity:0 immediately;
+   * if the animation then never advances - a tab backgrounded mid-load pauses
+   * requestAnimationFrame, which is exactly what happens when someone opens
+   * the exhibit and switches away while it loads - the panels stay invisible
+   * for ever. That was a real failure on the deployed site.
+   *
+   * So: skip the animation entirely when the document is hidden or the user
+   * prefers reduced motion, and in every case clear the inline styles on a
+   * timer, which guarantees a visible resting state whatever the animation did.
+   */
+  const panels = [
+    identity,
+    viewControls.root,
+    viewControls.list,
+    profile.root,
+    telemetry.root,
+    statusBar.root,
+  ];
+
+  const revealPanels = () => {
+    for (const node of panels) {
+      node.style.removeProperty('opacity');
+      node.style.removeProperty('transform');
+    }
+  };
+
+  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+  if (!document.hidden && !reduceMotion) {
+    panels.forEach((node, i) => {
       animate(
         node,
         { opacity: [0, 1], transform: ['translateY(12px)', 'translateY(0px)'] },
         { duration: 0.48, delay: 0.1 + i * 0.07, ease: [0.22, 0.61, 0.36, 1] },
       );
     });
+    setTimeout(revealPanels, 1400);
+  }
+  // If the tab is hidden now and shown later, the animation never ran - make
+  // sure nothing is left stuck invisible.
+  document.addEventListener('visibilitychange', revealPanels, { once: true });
 
   /* -------------------------------------------------------- store binding */
   let latest: AppState | null = null;
