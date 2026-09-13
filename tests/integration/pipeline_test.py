@@ -55,7 +55,7 @@ def check(name: str, ok: bool, detail: str = "") -> None:
 
 def default_binary() -> str:
     exe = os.path.join(FSW_DIR, "icarus.exe")
-    return exe if os.path.exists(exe) else os.path.join(FSW_DIR, "icarus")
+    return os.path.abspath(exe if os.path.exists(exe) else os.path.join(FSW_DIR, "icarus"))
 
 
 async def read_packet(ws, timeout: float = 6.0) -> dict:
@@ -80,7 +80,10 @@ async def drain(ws, n: int = 6) -> dict:
 async def main() -> int:
     from websockets.asyncio.client import connect
 
-    binary = sys.argv[1] if len(sys.argv) > 1 else default_binary()
+    # Resolve to an absolute path BEFORE anything changes directory: the OBC is
+    # launched with cwd=fsw/, so a path like ./fsw/icarus given relative to the
+    # repository root would be looked up as fsw/fsw/icarus.
+    binary = os.path.abspath(sys.argv[1]) if len(sys.argv) > 1 else default_binary()
     if not os.path.exists(binary):
         print(f"OBC binary not found at {binary}. Build it first (see fsw/README.md).")
         return 2
