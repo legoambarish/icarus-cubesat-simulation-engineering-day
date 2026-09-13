@@ -1,0 +1,849 @@
+/*
+ * ICARUS DIGITAL TWIN - application shell
+ * ----------------------------------------------------------------------------
+ * The 3D canvas is the product. Everything here is a thin instrument overlay
+ * in two side columns plus a bottom strip, so the centre of the frame (Earth)
+ * is never covered.
+ *
+ * THE PLATE. A panel is a hairline rule plus four corner ticks over an ink
+ * wash. No rounded corners, no backdrop blur, no drop-shadowed card. The ticks
+ * carry the frame; the edge only suggests it. A plate in a fault state
+ * recolours its own ticks - the frame carries the alarm, so no extra badge is
+ * needed.
+ */
+
+@import './fonts.css';
+@import './tokens.css';
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--c-void);
+  color: var(--c-text);
+  font-family: var(--f-ui);
+  font-size: var(--t-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+#app { position: fixed; inset: 0; }
+
+#scene-canvas {
+  position: fixed;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: grab;
+}
+#scene-canvas.dragging { cursor: grabbing; }
+#scene-canvas.hovering { cursor: crosshair; }
+
+/* Soft vignette so HUD text never sits on a bright limb of the Earth. */
+#vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background:
+    radial-gradient(135% 110% at 50% 50%, transparent 44%, rgba(0, 0, 0, 0.5) 100%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.38) 0%, transparent 14%, transparent 80%, rgba(0, 0, 0, 0.46) 100%);
+}
+
+/* ============================ THE PLATE ==================================
+ * One hairline rule, four corner ticks, an ink wash. ::before/::after carry
+ * the top two corners; a child .corners element carries the bottom two.
+ * ========================================================================= */
+
+.plate {
+  position: relative;
+  background: var(--c-plate);
+  border: 1px solid var(--c-edge);
+}
+
+.plate::before,
+.plate::after,
+.plate > .corners::before,
+.plate > .corners::after {
+  content: '';
+  position: absolute;
+  width: var(--tick-len);
+  height: var(--tick-len);
+  pointer-events: none;
+  transition: border-color var(--dur-med) var(--ease);
+}
+
+.plate::before { top: -1px; left: -1px; border-top: 1px solid var(--c-tick); border-left: 1px solid var(--c-tick); }
+.plate::after { top: -1px; right: -1px; border-top: 1px solid var(--c-tick); border-right: 1px solid var(--c-tick); }
+
+.plate > .corners { position: absolute; inset: 0; pointer-events: none; }
+.plate > .corners::before { bottom: -1px; left: -1px; border-bottom: 1px solid var(--c-tick); border-left: 1px solid var(--c-tick); }
+.plate > .corners::after { bottom: -1px; right: -1px; border-bottom: 1px solid var(--c-tick); border-right: 1px solid var(--c-tick); }
+
+/* Plate states: the ticks and the edge recolour together. */
+.plate.warn { border-color: var(--c-warn-line); background: rgba(20, 12, 2, 0.62); --c-tick: var(--c-warn); }
+.plate.crit { border-color: var(--c-critical-line); background: rgba(14, 5, 7, 0.72); --c-tick: var(--c-critical); }
+
+/* Panel head: a 3px accent key, the heading, a rule, then a right-hand tag. */
+.plate-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: 11px var(--s-4) 10px;
+  border-bottom: 1px solid var(--c-rule);
+}
+
+.key { width: 3px; height: 11px; flex: none; background: var(--c-accent); transition: background var(--dur-med) var(--ease); }
+.key.nominal { background: var(--c-nominal); }
+.key.warn { background: var(--c-warn); }
+.key.crit { background: var(--c-critical); }
+
+.plate-body { padding: 15px var(--s-4) var(--s-4); }
+
+.head-title {
+  font-size: var(--t-head);
+  font-weight: 700;
+  letter-spacing: var(--track-head);
+  color: var(--c-text-dim);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.label {
+  font-size: var(--t-label);
+  font-weight: 600;
+  letter-spacing: var(--track-label);
+  color: var(--c-text-faint);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.rule { flex: 1 1 auto; height: 1px; background: var(--c-rule); min-width: var(--s-2); }
+.spacer { flex: 1 1 auto; }
+
+.mono {
+  font-family: var(--f-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.value {
+  font-family: var(--f-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  font-size: var(--t-value);
+  color: var(--c-text);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.value.big { font-size: var(--t-value-lg); }
+.value.sm { font-size: var(--t-value-s); }
+.value.nominal { color: var(--c-nominal); }
+.value.warn { color: var(--c-warn); }
+.value.crit { color: var(--c-critical); }
+.value.dim { color: var(--c-text-faint); }
+
+.unit {
+  font-family: var(--f-mono);
+  font-weight: 400;
+  font-size: 0.46em;
+  color: var(--c-text-faint);
+  margin-left: 3px;
+  letter-spacing: 0;
+}
+.value.sm .unit { font-size: 0.62em; }
+
+/* ============================ HUD LAYOUT =================================
+ * Flex columns, not a fixed grid: the object register is the only element
+ * allowed to flex, so the identity plate, the telemetry plate and the status
+ * strip always get the height they need and the HUD can never overflow a
+ * 16:9 frame.
+ * ========================================================================= */
+
+#hud {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding: var(--s-7) var(--s-7) var(--s-6);
+  pointer-events: none;
+}
+
+#hud-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: var(--s-5);
+}
+
+.hud-col { display: flex; flex-direction: column; gap: var(--s-3); min-height: 0; }
+.hud-col-left { width: clamp(310px, 22vw, 382px); }
+.hud-col-right { width: clamp(330px, 24vw, 404px); }
+.hud-spacer { flex: 1 1 auto; min-height: var(--s-4); }
+
+#hud > *, #hud-main > *, .hud-col > * { pointer-events: auto; }
+#hud-main, .hud-spacer { pointer-events: none; }
+
+/* ============================ IDENTITY =================================== */
+
+#identity { padding: 18px var(--s-5) var(--s-4); }
+
+.brand { display: flex; align-items: flex-end; gap: var(--s-3); }
+.brand-mark {
+  font-weight: 700;
+  font-size: 30px;
+  letter-spacing: var(--track-brand);
+  color: var(--c-text);
+  line-height: 1;
+}
+.brand-bar { width: 3px; height: 22px; background: var(--c-accent); }
+.brand-sub {
+  font-size: var(--t-head);
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  color: var(--c-accent);
+  text-transform: uppercase;
+  line-height: 1.5;
+  padding-bottom: 2px;
+}
+.brand-note {
+  margin-top: 10px;
+  font-family: var(--f-mono);
+  font-size: var(--t-body);
+  letter-spacing: 0.1em;
+  color: var(--c-text-faint);
+  text-transform: uppercase;
+}
+
+.brand-hr {
+  margin-top: var(--s-4);
+  height: 1px;
+  background: linear-gradient(to right, var(--c-edge-strong), rgba(123, 227, 255, 0));
+}
+
+.status-rows { margin-top: var(--s-4); display: flex; flex-direction: column; gap: var(--s-3); }
+.status-block { display: flex; flex-direction: column; gap: 3px; }
+.status-row { display: flex; align-items: center; gap: var(--s-2); }
+
+/* Lamps are square. A round dot reads as a web bullet; a square reads as an
+   annunciator, which is what this is. */
+.lamp {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  background: var(--c-inactive);
+  transition: background var(--dur-med) var(--ease), box-shadow var(--dur-med) var(--ease);
+}
+.lamp.nominal { background: var(--c-nominal); box-shadow: 0 0 8px rgba(63, 214, 140, 0.8); }
+.lamp.accent { background: var(--c-accent); box-shadow: 0 0 8px rgba(123, 227, 255, 0.8); }
+.lamp.warn { background: var(--c-warn); box-shadow: 0 0 8px rgba(255, 176, 32, 0.8); }
+.lamp.crit { background: var(--c-critical); box-shadow: 0 0 9px rgba(255, 77, 79, 0.9); }
+.lamp.pulse { animation: lamp-pulse 1.6s ease-in-out infinite; }
+
+@keyframes lamp-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+
+.status-row .k { width: 84px; flex: none; }
+.status-row .v {
+  font-family: var(--f-mono);
+  font-size: var(--t-mono);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--c-text);
+}
+.status-row .v.nominal { color: var(--c-nominal); }
+.status-row .v.accent { color: var(--c-accent); }
+.status-row .v.warn { color: var(--c-warn); }
+.status-row .aux { font-family: var(--f-mono); font-size: var(--t-mono-s); color: var(--c-text-faint); flex: none; }
+
+.status-detail {
+  padding-left: 15px;
+  font-family: var(--f-mono);
+  font-size: var(--t-body);
+  letter-spacing: 0.04em;
+  color: var(--c-text-ghost);
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ============================ BUTTONS ==================================== */
+
+#view-controls { display: flex; gap: var(--s-2); justify-content: flex-end; flex: none; flex-wrap: wrap; }
+
+.btn {
+  position: relative;
+  appearance: none;
+  border: 1px solid var(--c-edge);
+  border-radius: 0;
+  background: var(--c-plate);
+  color: var(--c-text-dim);
+  font-family: var(--f-ui);
+  font-size: var(--t-head);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 9px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease);
+}
+
+/* Buttons take the same corner ticks as plates - one vocabulary. */
+.btn::before, .btn::after {
+  content: '';
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  pointer-events: none;
+  border-color: currentColor;
+  opacity: 0.5;
+}
+.btn::before { top: -1px; left: -1px; border-top: 1px solid; border-left: 1px solid; }
+.btn::after { bottom: -1px; right: -1px; border-bottom: 1px solid; border-right: 1px solid; }
+
+.btn:hover { color: var(--c-text); border-color: var(--c-edge-strong); background: var(--c-plate-raised); }
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { outline: 1px solid var(--c-accent); outline-offset: 2px; }
+
+.btn.on { color: var(--c-accent); border-color: var(--c-accent-line); background: var(--c-accent-wash); }
+
+.btn-icon { width: 13px; height: 13px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.5; }
+
+.btn.danger { color: var(--c-warn); border-color: var(--c-warn-line); background: var(--c-warn-wash); }
+.btn.danger:hover { color: #ffd08a; border-color: rgba(255, 176, 32, 0.7); background: rgba(255, 176, 32, 0.13); }
+.btn.danger.armed { color: var(--c-critical); border-color: var(--c-critical-line); background: var(--c-critical-wash); }
+.btn.go { color: var(--c-nominal); border-color: var(--c-nominal-line); background: var(--c-nominal-wash); }
+
+.btn[disabled] { opacity: 0.32; pointer-events: none; }
+
+/* ============================ OBJECT REGISTER ============================ */
+
+#object-list { flex: 1 1 auto; min-height: 92px; overflow: hidden; display: flex; flex-direction: column; }
+#object-list .plate-head { padding: 10px var(--s-3) 9px var(--s-4); }
+
+.obj-scroll {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(123, 227, 255, 0.24) transparent;
+  padding: 3px 0 5px;
+}
+.obj-scroll::-webkit-scrollbar { width: 5px; }
+.obj-scroll::-webkit-scrollbar-thumb { background: rgba(123, 227, 255, 0.24); }
+
+.obj-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 7px var(--s-4);
+  border: none;
+  border-left: 2px solid transparent;
+  border-radius: 0;
+  background: none;
+  color: var(--c-text-dim);
+  font-family: var(--f-mono);
+  font-size: var(--t-mono);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+
+.obj-item:hover { background: rgba(123, 227, 255, 0.06); color: var(--c-text); }
+.obj-item.selected { background: rgba(63, 214, 140, 0.08); border-left-color: var(--c-nominal); color: var(--c-text); }
+.obj-item .idx { width: 18px; flex: none; font-size: var(--t-micro); color: var(--c-text-ghost); }
+.obj-item .swatch { width: 5px; height: 5px; flex: none; }
+.obj-item .nm { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.obj-item .alt { font-size: var(--t-mono-s); color: var(--c-text-faint); }
+.obj-item.selected .alt { color: var(--c-nominal); }
+.obj-item .uni { font-size: var(--t-micro); color: var(--c-text-ghost); }
+
+/* ============================ OBJECT PROFILE ============================= */
+
+.profile-title { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.profile-name {
+  font-weight: 600;
+  font-size: 21px;
+  letter-spacing: 0.1em;
+  color: var(--c-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.profile-kind {
+  font-size: var(--t-label);
+  font-weight: 600;
+  letter-spacing: var(--track-label);
+  color: var(--c-nominal);
+  text-transform: uppercase;
+}
+
+.tag {
+  font-family: var(--f-mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border: 1px solid var(--c-edge);
+  color: var(--c-text-faint);
+  white-space: nowrap;
+  flex: none;
+}
+.tag.live { color: var(--c-nominal); border-color: var(--c-nominal-line); }
+.tag.fallback { color: var(--c-warn); border-color: var(--c-warn-line); }
+.tag.sim { color: var(--c-nominal); border-color: var(--c-nominal-line); }
+
+.kv-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4) var(--s-5); }
+.kv { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+
+.profile-foot {
+  margin-top: 17px;
+  padding-top: 13px;
+  border-top: 1px solid var(--c-rule);
+  font-family: var(--f-mono);
+  font-size: var(--t-body);
+  line-height: 1.6;
+  color: var(--c-text-ghost);
+}
+.profile-foot b { color: var(--c-text-faint); font-weight: 600; }
+
+/* ============================ TELEMETRY ================================== */
+
+.flight-state {
+  font-family: var(--f-mono);
+  font-size: var(--t-mono-s);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  padding: 5px 11px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  flex: none;
+  transition: color var(--dur-med) var(--ease), background var(--dur-med) var(--ease),
+    border-color var(--dur-med) var(--ease);
+}
+.flight-state.nominal { color: var(--c-nominal); background: var(--c-nominal-wash); border-color: var(--c-nominal-line); }
+.flight-state.busy { color: var(--c-accent); background: var(--c-accent-wash); border-color: var(--c-accent-line); }
+.flight-state.warn { color: var(--c-warn); background: var(--c-warn-wash); border-color: var(--c-warn-line); }
+.flight-state.crit { color: var(--c-critical); background: var(--c-critical-wash); border-color: var(--c-critical-line); }
+
+/* ---- scale tapes: an avionics index tape, not a progress bar ------------ */
+.tape-row { display: flex; gap: var(--s-4); }
+.tape-cell { display: flex; gap: 10px; min-width: 0; }
+.tape-cell.grow { flex: 1 1 auto; }
+
+.tape {
+  position: relative;
+  width: 9px;
+  height: 66px;
+  flex: none;
+  border: 1px solid rgba(123, 227, 255, 0.2);
+  background: rgba(123, 227, 255, 0.04);
+}
+.tape > .fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to top, var(--tape-c, var(--c-nominal)), transparent);
+  transition: height var(--dur-med) var(--ease), background var(--dur-med) var(--ease);
+}
+/* The index bug: a hairline that overhangs both edges, like a bug on a tape. */
+.tape > .bug {
+  position: absolute;
+  left: -4px;
+  width: 17px;
+  height: 1px;
+  background: var(--tape-c, var(--c-nominal));
+  transition: bottom var(--dur-med) var(--ease), background var(--dur-med) var(--ease);
+}
+.tape > .grad { position: absolute; left: 0; right: 0; height: 1px; background: rgba(123, 227, 255, 0.18); }
+.tape > .limit { position: absolute; left: 0; right: 0; height: 1px; background: rgba(255, 77, 79, 0.55); }
+.tape.warn { border-color: var(--c-warn-line); }
+.tape.crit { border-color: var(--c-critical-line); background: rgba(255, 77, 79, 0.06); }
+
+.readout { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+
+.tm-section { margin-top: var(--s-3); padding-top: var(--s-3); border-top: 1px solid var(--c-rule); }
+.tm-grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-3); }
+.tm-cell { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+
+/* ---- graticule traces --------------------------------------------------- */
+.spark-row { display: flex; align-items: center; gap: 11px; }
+.spark-row + .spark-row { margin-top: 10px; }
+.spark-row .label { width: 44px; flex: none; }
+.spark { flex: 1 1 auto; height: 30px; display: block; min-width: 0; }
+.spark-val {
+  width: 52px;
+  flex: none;
+  text-align: right;
+  font-family: var(--f-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--t-mono-s);
+  color: var(--c-text-dim);
+}
+
+/* ---- alert line --------------------------------------------------------- */
+.alert-line {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-top: var(--s-3);
+  padding: 10px var(--s-3);
+  border: 1px solid var(--c-rule);
+  background: rgba(123, 227, 255, 0.02);
+  font-family: var(--f-mono);
+  font-size: var(--t-body);
+  letter-spacing: 0.04em;
+  color: var(--c-text-faint);
+  min-height: 38px;
+}
+.alert-line.warn { color: var(--c-warn); border-color: var(--c-warn-line); background: var(--c-warn-wash); }
+.alert-line.crit { color: var(--c-critical); border-color: var(--c-critical-line); background: var(--c-critical-wash); }
+.alert-line .lamp { background: var(--c-text-ghost); box-shadow: none; }
+.alert-line.warn .lamp { background: var(--c-warn); }
+.alert-line.crit .lamp { background: var(--c-critical); }
+.alert-line .code { font-weight: 600; letter-spacing: 0.12em; flex: none; }
+.alert-line .msg { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--c-text-ghost); }
+.alert-line.crit .msg, .alert-line.warn .msg { color: inherit; opacity: 0.72; }
+.alert-line .ts { flex: none; font-size: var(--t-mono-s); color: var(--c-text-ghost); }
+
+/* ============================ COMMAND DECK =============================== */
+
+.deck { margin-top: var(--s-3); padding-top: var(--s-3); border-top: 1px solid var(--c-rule); }
+.deck-rows { display: flex; flex-direction: column; gap: var(--s-3); }
+
+.slider-row { display: grid; grid-template-columns: 66px minmax(0, 1fr) 68px; align-items: center; gap: var(--s-3); }
+.slider-row .sv {
+  font-family: var(--f-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--t-mono);
+  color: var(--c-text);
+  text-align: right;
+}
+
+/* A graduated track with a rectangular index bug - no browser chrome at all.
+   Graduations are painted on the wrapper so the track itself stays a 2px
+   hairline, and a bipolar control gets a taller centre tick. */
+.slider-wrap { position: relative; height: 18px; }
+.slider-wrap .grad {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 5px;
+  background: rgba(123, 227, 255, 0.22);
+}
+.slider-wrap .grad.zero { top: -1px; height: 8px; background: rgba(123, 227, 255, 0.5); }
+
+input[type="range"] {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 18px;
+  background: transparent;
+  cursor: ew-resize;
+  margin: 0;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 2px;
+  margin-top: 7px;
+  background: linear-gradient(
+    to right,
+    var(--c-accent) 0%,
+    var(--c-accent) var(--fill, 50%),
+    rgba(123, 227, 255, 0.12) var(--fill, 50%),
+    rgba(123, 227, 255, 0.12) 100%
+  );
+}
+input[type="range"]::-moz-range-track { height: 2px; background: rgba(123, 227, 255, 0.12); }
+input[type="range"]::-moz-range-progress { height: 2px; background: var(--c-accent); }
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 5px;
+  height: 14px;
+  margin-top: -6px;
+  border: none;
+  border-radius: 0;
+  background: #cdf2ff;
+  box-shadow: 0 0 9px rgba(123, 227, 255, 0.7);
+  transition: box-shadow var(--dur-fast) var(--ease);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 5px;
+  height: 14px;
+  border: none;
+  border-radius: 0;
+  background: #cdf2ff;
+  box-shadow: 0 0 9px rgba(123, 227, 255, 0.7);
+}
+input[type="range"]:hover::-webkit-slider-thumb { box-shadow: 0 0 14px rgba(123, 227, 255, 0.95); }
+input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 2px var(--c-accent); }
+input[type="range"][disabled] { opacity: 0.32; pointer-events: none; }
+
+.deck-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-2); margin-top: var(--s-4); }
+.deck-actions .btn { justify-content: center; padding: 10px 6px; font-size: var(--t-head); letter-spacing: 0.14em; }
+
+/* ============================ STATUS STRIP =============================== */
+
+#status-strip {
+  display: flex;
+  align-items: stretch;
+  height: 44px;
+  border: 1px solid var(--c-edge);
+  background: rgba(4, 10, 16, 0.76);
+  font-family: var(--f-mono);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* Leftmost cell is the mode plate: the flight state, always in the same place. */
+#strip-mode {
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  flex: none;
+  background: var(--c-nominal-wash);
+  border-right: 1px solid var(--c-nominal-line);
+  font-size: var(--t-mono);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--c-nominal);
+  transition: color var(--dur-med) var(--ease), background var(--dur-med) var(--ease),
+    border-color var(--dur-med) var(--ease);
+}
+#strip-mode.busy { color: var(--c-accent); background: var(--c-accent-wash); border-right-color: var(--c-accent-line); }
+#strip-mode.warn { color: var(--c-warn); background: var(--c-warn-wash); border-right-color: var(--c-warn-line); }
+#strip-mode.crit { color: var(--c-critical); background: var(--c-critical-wash); border-right-color: var(--c-critical-line); }
+
+#status-strip .seg {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 18px;
+  flex: none;
+  border-right: 1px solid var(--c-rule);
+}
+#status-strip .seg .k {
+  font-family: var(--f-ui);
+  font-size: var(--t-micro);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--c-text-faint);
+  text-transform: uppercase;
+}
+#status-strip .seg .v { font-size: var(--t-mono); font-variant-numeric: tabular-nums; color: var(--c-text); }
+#status-strip .seg .v.accent { color: var(--c-accent); }
+#status-strip .seg .v.nominal { color: var(--c-nominal); }
+#status-strip .seg .v.warn { color: var(--c-warn); }
+#status-strip .seg .v.crit { color: var(--c-critical); }
+
+/* The disclaimer is the only shrinkable element: the numeric segments keep
+   their width and the note ellipsises when the strip runs out of room. */
+#status-strip .note {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  font-size: var(--t-body);
+  letter-spacing: 0.06em;
+  color: var(--c-text-ghost);
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#status-strip .seg.right { border-right: none; border-left: 1px solid var(--c-rule); }
+
+/* ============================ ALERT BANNER =============================== */
+
+#alert-banner {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -120%);
+  z-index: 5;
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--c-critical);
+  border-top: none;
+  background: rgba(26, 5, 7, 0.94);
+  box-shadow: 0 12px 50px rgba(255, 60, 66, 0.28);
+  font-family: var(--f-mono);
+  pointer-events: none;
+  max-width: 62vw;
+}
+#alert-banner.warn { border-color: var(--c-warn); background: rgba(24, 16, 3, 0.94); box-shadow: 0 12px 50px rgba(255, 176, 32, 0.2); }
+#alert-banner.info { border-color: var(--c-accent-line); background: rgba(5, 16, 23, 0.94); box-shadow: 0 12px 50px rgba(123, 227, 255, 0.18); }
+
+#alert-banner .bar { width: 4px; flex: none; background: var(--c-critical); }
+#alert-banner.warn .bar { background: var(--c-warn); }
+#alert-banner.info .bar { background: var(--c-accent); }
+
+#alert-banner .body { display: flex; align-items: center; gap: 18px; padding: 13px 26px; min-width: 0; }
+#alert-banner .glyph { width: 24px; height: 24px; flex: none; fill: none; stroke: var(--c-critical); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+#alert-banner.warn .glyph { stroke: var(--c-warn); }
+#alert-banner.info .glyph { stroke: var(--c-accent); }
+
+#alert-banner .txt { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+#alert-banner .ttl { font-size: 14px; font-weight: 600; letter-spacing: 0.26em; color: var(--c-critical); }
+#alert-banner.warn .ttl { color: var(--c-warn); }
+#alert-banner.info .ttl { color: var(--c-accent); }
+#alert-banner .dsc { font-size: var(--t-mono-s); letter-spacing: 0.04em; color: rgba(235, 245, 255, 0.82); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* SAFE MODE: an inset red edge on the whole frame. */
+#safe-mode-frame {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  box-shadow: inset 0 0 200px rgba(255, 60, 66, 0.2), inset 0 0 0 2px rgba(255, 77, 79, 0.48);
+  transition: opacity 420ms var(--ease);
+}
+#safe-mode-frame.on { opacity: 1; animation: safe-breathe 3.2s ease-in-out infinite; }
+
+@keyframes safe-breathe {
+  0%, 100% { opacity: 0.66; }
+  50% { opacity: 1; }
+}
+
+/* ============================ HOVER LABEL ================================ */
+
+#hover-label {
+  position: fixed;
+  z-index: 4;
+  pointer-events: none;
+  padding: 5px 9px;
+  border: 1px solid var(--c-edge-strong);
+  background: rgba(4, 10, 16, 0.9);
+  font-family: var(--f-mono);
+  font-size: var(--t-mono-s);
+  letter-spacing: 0.08em;
+  color: var(--c-text);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 110ms linear;
+  transform: translate(14px, -50%);
+}
+#hover-label.on { opacity: 1; }
+
+/* ============================ BOOT / FATAL =============================== */
+
+#boot {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-4);
+  background: var(--c-void);
+  transition: opacity 620ms var(--ease);
+}
+#boot.gone { opacity: 0; pointer-events: none; }
+
+#boot .bmark { font-family: var(--f-ui); font-weight: 700; font-size: 24px; letter-spacing: var(--track-brand); color: var(--c-text); }
+#boot .bsub { font-family: var(--f-mono); font-size: var(--t-mono-s); letter-spacing: 0.22em; color: var(--c-text-faint); text-transform: uppercase; }
+#boot .bbar { width: 220px; height: 2px; background: rgba(123, 227, 255, 0.1); overflow: hidden; }
+#boot .bbar > i { display: block; height: 100%; width: 30%; background: var(--c-accent); animation: boot-slide 1.15s ease-in-out infinite; }
+
+@keyframes boot-slide {
+  0% { transform: translateX(-110%); }
+  100% { transform: translateX(360%); }
+}
+
+#fatal {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-4);
+  padding: 8vw;
+  background: var(--c-void);
+  text-align: center;
+}
+#fatal.on { display: flex; }
+#fatal h1 { font-family: var(--f-mono); font-size: 20px; letter-spacing: 0.2em; color: var(--c-critical); margin: 0; text-transform: uppercase; }
+#fatal p { max-width: 620px; color: var(--c-text-dim); line-height: 1.65; margin: 0; font-size: 15px; font-family: var(--f-ui); }
+#fatal code { font-family: var(--f-mono); color: var(--c-accent); background: rgba(123, 227, 255, 0.08); padding: 2px 6px; }
+
+/* ============================ RESPONSIVE =================================
+ * The design target is 1920x1080, where nothing is hidden. Below that the
+ * instrument set sheds SECONDARY information in a fixed order, and never the
+ * primary readouts:
+ *   1. the object register (navigation, reachable from the scene anyway)
+ *   2. the graticule traces (trend, not state)
+ *   3. the attitude bank (the pointing error stays in the alert line)
+ * The telemetry plate must never be clipped by the status strip, which is why
+ * these are height queries rather than width queries.
+ * ========================================================================= */
+
+@media (max-width: 1440px) {
+  #hud { padding: var(--s-5) var(--s-5) var(--s-4); gap: var(--s-2); }
+  .hud-col-left { width: clamp(272px, 24vw, 340px); }
+  .hud-col-right { width: clamp(300px, 26vw, 376px); }
+  .brand-mark { font-size: 24px; }
+}
+
+/* Short viewport: drop the register first. */
+@media (max-height: 940px) {
+  #object-list { display: none; }
+}
+
+/* Shorter still: the traces go, and the plate tightens up. */
+@media (max-height: 820px) {
+  #hud { padding: var(--s-4) var(--s-5) var(--s-3); }
+  #telemetry .spark-row { display: none; }
+  #telemetry .tm-section:nth-of-type(3) { display: none; }
+  .plate-body { padding: 12px var(--s-4) var(--s-3); }
+  .tm-section { margin-top: 10px; padding-top: 10px; }
+  .deck { margin-top: 10px; padding-top: 10px; }
+  .tape { height: 54px; }
+}
+
+/* Very short (a 16:10 laptop in a browser with lots of chrome): the attitude
+   bank goes too. The pointing error is still on the alert line when it
+   matters, and every power and thermal value is still on screen. */
+@media (max-height: 700px) {
+  #identity { padding: 13px var(--s-4) var(--s-3); }
+  .brand-mark { font-size: 21px; }
+  .status-rows { margin-top: var(--s-3); gap: var(--s-2); }
+  .profile-foot { display: none; }
+  .deck-rows .slider-row:nth-child(3) { display: none; }
+  #telemetry .tm-section:nth-of-type(2) { display: none; }
+}
+
+@media (max-width: 900px) {
+  .hud-col-left { display: none; }
+  .hud-col-right { width: min(96vw, 400px); }
+  #status-strip .seg.opt, #status-strip .note { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

@@ -1,0 +1,30 @@
+/*
+ * TYPEFACES - self-hosted, no network at showtime
+ * ----------------------------------------------------------------------------
+ * IBM Plex Mono  every number, code, timestamp and identifier
+ * Archivo        every label, heading and button
+ *
+ * Both are bundled through @fontsource, which vendors the woff2 files into the
+ * build. That matters for an exhibition: a Google Fonts <link> would mean the
+ * whole interface falls back to a system face the moment the venue Wi-Fi drops,
+ * and the tracking-heavy labels would reflow. Vite rewrites the font URLs with
+ * the deployment base path, so they also work under a GitHub Pages subpath.
+ *
+ * LICENCE
+ *   IBM Plex Mono - SIL Open Font License 1.1, Copyright (c) 2017 IBM Corp.
+ *   Archivo       - SIL Open Font License 1.1, Copyright (c) Omnibus-Type.
+ * Both permit bundling and redistribution. The full licence text ships inside
+ * each @fontsource package and is reproduced in THIRD-PARTY-NOTICES.md.
+ *
+ * Only the four faces the interface actually uses are imported - loading the
+ * full families would be roughly ten times the bytes for nothing.
+ */
+
+/* Numerics: 400 for detail lines, 500 for the large readouts, 600 for codes. */
+@import '@fontsource/ibm-plex-mono/latin-400.css';
+@import '@fontsource/ibm-plex-mono/latin-500.css';
+@import '@fontsource/ibm-plex-mono/latin-600.css';
+
+/* Labels: 600 for field labels, 700 for headings and the wordmark. */
+@import '@fontsource/archivo/latin-600.css';
+@import '@fontsource/archivo/latin-700.css';

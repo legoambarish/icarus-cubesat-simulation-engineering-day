@@ -1,0 +1,443 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Archivo:wght@500;600;700&display=swap">
+  <style>
+    body { margin: 0; background: #04070a; }
+    a { color: #7be3ff; } a:hover { color: #b6f0ff; }
+    .plate { position: relative; }
+    /* Corner ticks: the frame is four L-marks and one hairline, not a card.
+       This is the single move that separates an instrument plate from a
+       dark-mode dashboard card. */
+    .plate::before, .plate::after,
+    .tick-b::before, .tick-b::after {
+      content: ""; position: absolute; width: 11px; height: 11px; pointer-events: none;
+    }
+    .plate::before { top: -1px; left: -1px; border-top: 1px solid #7be3ff; border-left: 1px solid #7be3ff; }
+    .plate::after  { top: -1px; right: -1px; border-top: 1px solid #7be3ff; border-right: 1px solid #7be3ff; }
+    .tick-b::before { bottom: -1px; left: -1px; border-bottom: 1px solid #7be3ff; border-left: 1px solid #7be3ff; }
+    .tick-b::after  { bottom: -1px; right: -1px; border-bottom: 1px solid #7be3ff; border-right: 1px solid #7be3ff; }
+  </style>
+</helmet>
+
+<div style="position: relative; width: 1920px; height: 1080px; background: #04070a; overflow: hidden; font-family: 'Archivo', system-ui, sans-serif;">
+
+  <!-- ======================= 3D LAYER (stand-in) ======================= -->
+  <div style="position: absolute; inset: 0; background:
+      radial-gradient(1100px 1100px at 50% 52%, #0d3a5c 0%, #0a2a44 38%, #06121e 62%, #04070a 76%),
+      radial-gradient(900px 900px at 34% 36%, rgba(120,190,225,0.22) 0%, rgba(0,0,0,0) 55%);"></div>
+  <div style="position: absolute; left: 50%; top: 52%; width: 1014px; height: 1014px; transform: translate(-50%, -50%); border-radius: 50%; background:
+      radial-gradient(circle at 33% 30%, #2e6f8f 0%, #1b5273 26%, #0c3350 52%, #061c2d 72%, #030a11 88%);
+      box-shadow: 0 0 130px 8px rgba(60,150,210,0.14), inset -90px -60px 220px rgba(0,0,0,0.85);"></div>
+  <div style="position: absolute; left: 50%; top: 52%; width: 1074px; height: 1074px; transform: translate(-50%, -50%); border-radius: 50%;
+      box-shadow: inset 0 0 40px 6px rgba(110,190,240,0.30); opacity: 0.75;"></div>
+
+  <!-- Orbit rings -->
+  <div style="position: absolute; left: 50%; top: 52%; width: 1180px; height: 340px; transform: translate(-50%, -50%) rotate(-19deg); border-radius: 50%; border: 1px solid rgba(123,227,255,0.22);"></div>
+  <div style="position: absolute; left: 50%; top: 52%; width: 1150px; height: 1060px; transform: translate(-50%, -50%) rotate(24deg); border-radius: 50%; border: 1px solid rgba(143,125,255,0.16);"></div>
+  <div style="position: absolute; left: 50%; top: 52%; width: 1120px; height: 700px; transform: translate(-50%, -50%) rotate(58deg); border-radius: 50%; border: 1px solid rgba(88,192,168,0.14);"></div>
+
+  <!-- Selected-object reticle: hairline crosshair with a gap, not a circle -->
+  <div style="position: absolute; left: 1148px; top: 388px; width: 84px; height: 84px; transform: translate(-50%, -50%);">
+    <div style="position: absolute; left: 50%; top: 0; width: 1px; height: 24px; background: #3fd68c;"></div>
+    <div style="position: absolute; left: 50%; bottom: 0; width: 1px; height: 24px; background: #3fd68c;"></div>
+    <div style="position: absolute; top: 50%; left: 0; height: 1px; width: 24px; background: #3fd68c;"></div>
+    <div style="position: absolute; top: 50%; right: 0; height: 1px; width: 24px; background: #3fd68c;"></div>
+    <div style="position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; transform: translate(-50%,-50%) rotate(45deg); background: #3fd68c;"></div>
+  </div>
+  <div style="position: absolute; left: 1196px; top: 356px; display: flex; flex-direction: column; gap: 2px;">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.12em; color: #3fd68c;">ICARUS-1U</div>
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: rgba(200,225,240,0.45);">500.0 km · SIM</div>
+  </div>
+
+  <!-- ======================= TOP LEFT: IDENTITY ======================= -->
+  <div class="plate tick-b" style="position: absolute; left: 40px; top: 34px; width: 382px; padding: 18px 20px 16px; background: rgba(4,10,16,0.62); border: 1px solid rgba(123,227,255,0.13);">
+    <div style="display: flex; align-items: flex-end; gap: 12px;">
+      <div style="font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: 0.3em; color: #eaf6ff; line-height: 1;">ICARUS</div>
+      <div style="width: 3px; height: 22px; background: #7be3ff;"></div>
+      <div style="font-size: 10px; font-weight: 600; letter-spacing: 0.26em; color: #7be3ff; text-transform: uppercase; line-height: 1.5; padding-bottom: 2px;">Digital<br>Twin</div>
+    </div>
+    <div style="margin-top: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; color: rgba(200,225,240,0.42); text-transform: uppercase;">CubeSat ground-segment visualisation</div>
+
+    <div style="margin-top: 16px; height: 1px; background: linear-gradient(to right, rgba(123,227,255,0.34), rgba(123,227,255,0));"></div>
+
+    <div style="margin-top: 14px; display: flex; flex-direction: column; gap: 11px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="width: 7px; height: 7px; background: #3fd68c; box-shadow: 0 0 8px rgba(63,214,140,0.8);"></div>
+        <div style="width: 84px; font-size: 10px; font-weight: 600; letter-spacing: 0.16em; color: rgba(200,225,240,0.44); text-transform: uppercase;">Orbit data</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; color: #3fd68c;">LIVE</div>
+        <div style="flex-grow: 1; height: 1px; background: rgba(123,227,255,0.1);"></div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: rgba(200,225,240,0.42);">16 OBJ</div>
+      </div>
+      <div style="padding-left: 17px; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.04em; color: rgba(200,225,240,0.32);">CELESTRAK OMM · SGP4 PROPAGATED LOCALLY</div>
+
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="width: 7px; height: 7px; background: #7be3ff; box-shadow: 0 0 8px rgba(123,227,255,0.8);"></div>
+        <div style="width: 84px; font-size: 10px; font-weight: 600; letter-spacing: 0.16em; color: rgba(200,225,240,0.44); text-transform: uppercase;">FSW link</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; color: #7be3ff;">LOCAL</div>
+        <div style="flex-grow: 1; height: 1px; background: rgba(123,227,255,0.1);"></div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: rgba(200,225,240,0.42);">10 Hz</div>
+      </div>
+      <div style="padding-left: 17px; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.04em; color: rgba(200,225,240,0.32);">ICARUS C OBC · UDP 5005 · WS 8082</div>
+    </div>
+  </div>
+
+  <!-- ======================= TOP RIGHT: CONTROLS + REGISTER ======================= -->
+  <div style="position: absolute; right: 40px; top: 34px; width: 404px; display: flex; flex-direction: column; gap: 12px; align-items: stretch;">
+
+    <div style="display: flex; gap: 8px; justify-content: flex-end;">
+      <div class="plate tick-b" style="padding: 9px 15px; background: rgba(123,227,255,0.09); border: 1px solid rgba(123,227,255,0.34); font-size: 10.5px; font-weight: 600; letter-spacing: 0.18em; color: #7be3ff; text-transform: uppercase;">Icarus</div>
+      <div class="plate tick-b" style="padding: 9px 15px; background: rgba(4,10,16,0.62); border: 1px solid rgba(123,227,255,0.13); font-size: 10.5px; font-weight: 600; letter-spacing: 0.18em; color: rgba(200,225,240,0.6); text-transform: uppercase;">Reset view</div>
+      <div class="plate tick-b" style="padding: 9px 15px; background: rgba(4,10,16,0.62); border: 1px solid rgba(123,227,255,0.13); font-size: 10.5px; font-weight: 600; letter-spacing: 0.18em; color: rgba(200,225,240,0.6); text-transform: uppercase;">Audio</div>
+    </div>
+
+    <div class="plate tick-b" style="background: rgba(4,10,16,0.62); border: 1px solid rgba(123,227,255,0.13);">
+      <div style="display: flex; align-items: center; gap: 10px; padding: 11px 16px 10px; border-bottom: 1px solid rgba(123,227,255,0.1);">
+        <div style="width: 3px; height: 11px; background: #7be3ff;"></div>
+        <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.22em; color: rgba(200,225,240,0.62); text-transform: uppercase;">Object register</div>
+        <div style="flex-grow: 1;"></div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: rgba(200,225,240,0.38);">17</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column;">
+        <div style="display: flex; align-items: center; gap: 11px; padding: 7px 16px; background: rgba(63,214,140,0.08); border-left: 2px solid #3fd68c;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(200,225,240,0.3); width: 18px;">00</div>
+          <div style="width: 5px; height: 5px; background: #3fd68c;"></div>
+          <div style="flex-grow: 1; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.04em; color: #eaf6ff;">ICARUS-1U</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #3fd68c;">500</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: rgba(200,225,240,0.3);">km</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 11px; padding: 7px 16px; border-left: 2px solid transparent;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(200,225,240,0.3); width: 18px;">01</div>
+          <div style="width: 5px; height: 5px; background: #ffd479;"></div>
+          <div style="flex-grow: 1; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.04em; color: rgba(234,246,255,0.82);">ISS (ZARYA)</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: rgba(200,225,240,0.55);">439</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: rgba(200,225,240,0.3);">km</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 11px; padding: 7px 16px; border-left: 2px solid transparent;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(200,225,240,0.3); width: 18px;">02</div>
+          <div style="width: 5px; height: 5px; background: #ffd479;"></div>
+          <div style="flex-grow: 1; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.04em; color: rgba(234,246,255,0.82);">CSS (TIANHE)</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: rgba(200,225,240,0.55);">385</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: rgba(200,225,240,0.3);">km</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 11px; padding: 7px 16px; border-left: 2px solid transparent;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(200,225,240,0.3); width: 18px;">03</div>
+          <div style="width: 5px; height: 5px; background: #7be3ff;"></div>
+          <div style="flex-grow: 1; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.04em; color: rgba(234,246,255,0.82);">HUBBLE (HST)</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: rgba(200,225,240,0.55);">508</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: rgba(200,225,240,0.3);">km</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 11px; padding: 7px 16px; border-left: 2px solid transparent;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(200,225,240,0.3); width: 18px;">04</div>
+          <div style="width: 5px; height: 5px; background: #7be3ff;"></div>
+          <div style="flex-grow: 1; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.04em; color: rgba(234,246,255,0.82);">TERRA</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: rgba(200,225,240,0.55);">700</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: rgba(200,225,240,0.3);">km</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 11px; padding: 7px 16px; border-left: 2px solid transparent;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(200,225,240,0.3); width: 18px;">05</div>
+          <div style="width: 5px; height: 5px; background: #58c0a8;"></div>
+          <div style="flex-grow: 1; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.04em; color: rgba(234,246,255,0.82);">NOAA-20</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: rgba(200,225,240,0.55);">828</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: rgba(200,225,240,0.3);">km</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 11px; padding: 7px 16px; border-left: 2px solid transparent;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(200,225,240,0.3); width: 18px;">06</div>
+          <div style="width: 5px; height: 5px; background: #8f7dff;"></div>
+          <div style="flex-grow: 1; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.04em; color: rgba(234,246,255,0.82);">SWISSCUBE</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: rgba(200,225,240,0.55);">692</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: rgba(200,225,240,0.3);">km</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 11px; padding: 7px 16px 9px; border-left: 2px solid transparent;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(200,225,240,0.3); width: 18px;">07</div>
+          <div style="width: 5px; height: 5px; background: #8f7dff;"></div>
+          <div style="flex-grow: 1; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.04em; color: rgba(234,246,255,0.82);">FUNCUBE-1</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: rgba(200,225,240,0.55);">560</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: rgba(200,225,240,0.3);">km</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================= BOTTOM LEFT: SELECTED OBJECT ======================= -->
+  <div class="plate tick-b" style="position: absolute; left: 40px; bottom: 92px; width: 382px; background: rgba(4,10,16,0.62); border: 1px solid rgba(123,227,255,0.13);">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 11px 16px 10px; border-bottom: 1px solid rgba(123,227,255,0.1);">
+      <div style="width: 3px; height: 11px; background: #3fd68c;"></div>
+      <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.22em; color: rgba(200,225,240,0.62); text-transform: uppercase;">Selected object</div>
+      <div style="flex-grow: 1;"></div>
+      <div style="padding: 3px 7px; border: 1px solid rgba(63,214,140,0.4); font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.14em; color: #3fd68c;">SIMULATED</div>
+    </div>
+
+    <div style="padding: 15px 16px 16px;">
+      <div style="display: flex; align-items: baseline; gap: 10px;">
+        <div style="font-family: 'Archivo', sans-serif; font-weight: 600; font-size: 21px; letter-spacing: 0.1em; color: #eaf6ff;">ICARUS-1U</div>
+        <div style="flex-grow: 1; height: 1px; background: rgba(123,227,255,0.12);"></div>
+      </div>
+      <div style="margin-top: 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.2em; color: #3fd68c; text-transform: uppercase;">Simulated 1U CubeSat</div>
+
+      <div style="margin-top: 18px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 20px;">
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+          <div style="font-size: 9.5px; font-weight: 600; letter-spacing: 0.2em; color: rgba(200,225,240,0.4); text-transform: uppercase;">Altitude</div>
+          <div style="display: flex; align-items: baseline; gap: 4px;"><span style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 23px; color: #eaf6ff; letter-spacing: -0.01em;">500.0</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: rgba(200,225,240,0.4);">km</span></div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+          <div style="font-size: 9.5px; font-weight: 600; letter-spacing: 0.2em; color: rgba(200,225,240,0.4); text-transform: uppercase;">Velocity</div>
+          <div style="display: flex; align-items: baseline; gap: 4px;"><span style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 23px; color: #eaf6ff; letter-spacing: -0.01em;">7.617</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: rgba(200,225,240,0.4);">km/s</span></div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+          <div style="font-size: 9.5px; font-weight: 600; letter-spacing: 0.2em; color: rgba(200,225,240,0.4); text-transform: uppercase;">Inclination</div>
+          <div style="display: flex; align-items: baseline; gap: 4px;"><span style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 23px; color: #eaf6ff; letter-spacing: -0.01em;">51.60</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: rgba(200,225,240,0.4);">deg</span></div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+          <div style="font-size: 9.5px; font-weight: 600; letter-spacing: 0.2em; color: rgba(200,225,240,0.4); text-transform: uppercase;">Period</div>
+          <div style="display: flex; align-items: baseline; gap: 4px;"><span style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 23px; color: #eaf6ff; letter-spacing: -0.01em;">94.47</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: rgba(200,225,240,0.4);">min</span></div>
+        </div>
+      </div>
+
+      <div style="margin-top: 17px; padding-top: 13px; border-top: 1px solid rgba(123,227,255,0.1); font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; line-height: 1.6; color: rgba(200,225,240,0.36);">
+        Educational 1U CubeSat simulation. ICARUS is not a real spacecraft and is not in orbit; its state comes from the flight-software simulator.
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================= BOTTOM RIGHT: TELEMETRY ======================= -->
+  <div class="plate tick-b" style="position: absolute; right: 40px; bottom: 92px; width: 404px; background: rgba(4,10,16,0.66); border: 1px solid rgba(123,227,255,0.13);">
+
+    <div style="display: flex; align-items: center; gap: 10px; padding: 11px 16px 10px; border-bottom: 1px solid rgba(123,227,255,0.1);">
+      <div style="width: 3px; height: 11px; background: #7be3ff;"></div>
+      <div style="display: flex; flex-direction: column; gap: 2px;">
+        <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.22em; color: rgba(200,225,240,0.62); text-transform: uppercase;">Icarus telemetry</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; color: rgba(200,225,240,0.32);">SRC · ICARUS C OBC</div>
+      </div>
+      <div style="flex-grow: 1;"></div>
+      <div style="padding: 5px 11px; background: rgba(63,214,140,0.1); border: 1px solid rgba(63,214,140,0.42); font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.16em; color: #3fd68c;">NOMINAL</div>
+    </div>
+
+    <!-- primary readouts with scale tapes -->
+    <div style="display: flex; padding: 16px 16px 4px; gap: 16px;">
+      <!-- battery with an avionics-style tape -->
+      <div style="display: flex; gap: 10px; flex-grow: 1;">
+        <div style="position: relative; width: 9px; height: 66px; border: 1px solid rgba(123,227,255,0.2); background: rgba(123,227,255,0.04);">
+          <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 84%; background: linear-gradient(to top, rgba(63,214,140,0.75), rgba(63,214,140,0.3));"></div>
+          <div style="position: absolute; left: -4px; bottom: 84%; width: 17px; height: 1px; background: #3fd68c;"></div>
+          <div style="position: absolute; left: 0; right: 0; top: 25%; height: 1px; background: rgba(123,227,255,0.18);"></div>
+          <div style="position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(123,227,255,0.18);"></div>
+          <div style="position: absolute; left: 0; right: 0; top: 75%; height: 1px; background: rgba(123,227,255,0.18);"></div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="font-size: 9.5px; font-weight: 600; letter-spacing: 0.2em; color: rgba(200,225,240,0.4); text-transform: uppercase;">Battery</div>
+          <div style="display: flex; align-items: baseline; gap: 3px;"><span style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 34px; line-height: 1; color: #3fd68c; letter-spacing: -0.02em;">83.9</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: rgba(63,214,140,0.6);">%</span></div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; color: rgba(200,225,240,0.34);">+4.0 W NET · CHARGING</div>
+        </div>
+      </div>
+
+      <!-- temperature with tape -->
+      <div style="display: flex; gap: 10px;">
+        <div style="position: relative; width: 9px; height: 66px; border: 1px solid rgba(123,227,255,0.2); background: rgba(123,227,255,0.04);">
+          <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 38%; background: linear-gradient(to top, rgba(123,227,255,0.6), rgba(123,227,255,0.25));"></div>
+          <div style="position: absolute; left: -4px; bottom: 38%; width: 17px; height: 1px; background: #7be3ff;"></div>
+          <div style="position: absolute; left: 0; right: 0; top: 12%; height: 1px; background: rgba(255,77,79,0.55);"></div>
+          <div style="position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(123,227,255,0.18);"></div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="font-size: 9.5px; font-weight: 600; letter-spacing: 0.2em; color: rgba(200,225,240,0.4); text-transform: uppercase;">Bus temp</div>
+          <div style="display: flex; align-items: baseline; gap: 3px;"><span style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 34px; line-height: 1; color: #eaf6ff; letter-spacing: -0.02em;">17.5</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: rgba(200,225,240,0.4);">C</span></div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; color: rgba(200,225,240,0.34);">LIM 58 C</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- secondary row -->
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; padding: 14px 16px; margin-top: 8px; border-top: 1px solid rgba(123,227,255,0.09);">
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.18em; color: rgba(200,225,240,0.38); text-transform: uppercase;">Solar</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 16px; color: #3fd68c;">9.40</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.18em; color: rgba(200,225,240,0.38); text-transform: uppercase;">Load</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 16px; color: #eaf6ff;">5.40</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.18em; color: rgba(200,225,240,0.38); text-transform: uppercase;">Vib</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 16px; color: #eaf6ff;">0.014</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.18em; color: rgba(200,225,240,0.38); text-transform: uppercase;">Illum</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 16px; color: #3fd68c;">SUNLIT</div>
+      </div>
+    </div>
+
+    <!-- attitude bank -->
+    <div style="padding: 13px 16px; border-top: 1px solid rgba(123,227,255,0.09);">
+      <div style="display: flex; align-items: center; gap: 9px; margin-bottom: 11px;">
+        <div style="font-size: 9px; font-weight: 700; letter-spacing: 0.2em; color: rgba(200,225,240,0.44); text-transform: uppercase;">Attitude</div>
+        <div style="flex-grow: 1; height: 1px; background: rgba(123,227,255,0.09);"></div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: rgba(200,225,240,0.3);">ZYX · DEG</div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 3px;">
+          <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.16em; color: rgba(200,225,240,0.36); text-transform: uppercase;">Roll</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 17px; color: #eaf6ff;">+0.0</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 3px;">
+          <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.16em; color: rgba(200,225,240,0.36); text-transform: uppercase;">Pitch</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 17px; color: #eaf6ff;">+0.0</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 3px;">
+          <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.16em; color: rgba(200,225,240,0.36); text-transform: uppercase;">Yaw</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 17px; color: #eaf6ff;">+0.0</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 3px;">
+          <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.16em; color: rgba(200,225,240,0.36); text-transform: uppercase;">Err</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 17px; color: #3fd68c;">0.0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- graticule traces -->
+    <div style="padding: 12px 16px 14px; border-top: 1px solid rgba(123,227,255,0.09); display: flex; flex-direction: column; gap: 10px;">
+      <div style="display: flex; align-items: center; gap: 11px;">
+        <div style="width: 42px; font-size: 9px; font-weight: 600; letter-spacing: 0.14em; color: rgba(200,225,240,0.38); text-transform: uppercase;">Temp</div>
+        <svg viewBox="0 0 240 30" preserveAspectRatio="none" style="flex-grow: 1; height: 30px;">
+          <rect x="0" y="0" width="240" height="30" fill="rgba(123,227,255,0.03)"></rect>
+          <line x1="0" y1="15" x2="240" y2="15" stroke="rgba(123,227,255,0.12)" stroke-width="0.5" stroke-dasharray="2 4"></line>
+          <line x1="60" y1="0" x2="60" y2="30" stroke="rgba(123,227,255,0.08)" stroke-width="0.5"></line>
+          <line x1="120" y1="0" x2="120" y2="30" stroke="rgba(123,227,255,0.08)" stroke-width="0.5"></line>
+          <line x1="180" y1="0" x2="180" y2="30" stroke="rgba(123,227,255,0.08)" stroke-width="0.5"></line>
+          <polyline points="0,24 20,22 40,19 60,15 80,11 100,9 120,10 140,13 160,17 180,20 200,22 220,21 240,18" fill="none" stroke="#7be3ff" stroke-width="1.4" vector-effect="non-scaling-stroke"></polyline>
+        </svg>
+        <div style="width: 52px; text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: rgba(200,225,240,0.6);">17.5</div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 11px;">
+        <div style="width: 42px; font-size: 9px; font-weight: 600; letter-spacing: 0.14em; color: rgba(200,225,240,0.38); text-transform: uppercase;">Vib g</div>
+        <svg viewBox="0 0 240 30" preserveAspectRatio="none" style="flex-grow: 1; height: 30px;">
+          <rect x="0" y="0" width="240" height="30" fill="rgba(123,227,255,0.03)"></rect>
+          <line x1="0" y1="15" x2="240" y2="15" stroke="rgba(123,227,255,0.12)" stroke-width="0.5" stroke-dasharray="2 4"></line>
+          <line x1="60" y1="0" x2="60" y2="30" stroke="rgba(123,227,255,0.08)" stroke-width="0.5"></line>
+          <line x1="120" y1="0" x2="120" y2="30" stroke="rgba(123,227,255,0.08)" stroke-width="0.5"></line>
+          <line x1="180" y1="0" x2="180" y2="30" stroke="rgba(123,227,255,0.08)" stroke-width="0.5"></line>
+          <polyline points="0,22 15,20 30,23 45,21 60,19 75,22 90,20 105,23 120,21 135,19 150,22 165,20 180,23 195,21 210,20 225,22 240,21" fill="none" stroke="#ffb020" stroke-width="1.4" vector-effect="non-scaling-stroke"></polyline>
+        </svg>
+        <div style="width: 52px; text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: rgba(200,225,240,0.6);">0.014</div>
+      </div>
+    </div>
+
+    <!-- alert line -->
+    <div style="display: flex; align-items: center; gap: 11px; margin: 0 16px 14px; padding: 10px 12px; border: 1px solid rgba(123,227,255,0.1); background: rgba(123,227,255,0.02);">
+      <div style="width: 6px; height: 6px; background: rgba(200,225,240,0.3);"></div>
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; font-weight: 600; letter-spacing: 0.12em; color: rgba(200,225,240,0.5);">NO ACTIVE ALERT</div>
+      <div style="flex-grow: 1;"></div>
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(200,225,240,0.28);">ALL SUBSYSTEMS IN LIMITS</div>
+    </div>
+
+    <!-- control deck -->
+    <div style="padding: 14px 16px 16px; border-top: 1px solid rgba(123,227,255,0.09);">
+      <div style="display: flex; align-items: center; gap: 9px; margin-bottom: 13px;">
+        <div style="font-size: 9px; font-weight: 700; letter-spacing: 0.2em; color: rgba(200,225,240,0.44); text-transform: uppercase;">Command deck</div>
+        <div style="flex-grow: 1; height: 1px; background: rgba(123,227,255,0.09);"></div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="display: grid; grid-template-columns: 66px minmax(0, 1fr) 62px; align-items: center; gap: 12px;">
+          <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.16em; color: rgba(200,225,240,0.38); text-transform: uppercase;">Altitude</div>
+          <div style="position: relative; height: 16px;">
+            <div style="position: absolute; top: 7px; left: 0; right: 0; height: 2px; background: rgba(123,227,255,0.12);"></div>
+            <div style="position: absolute; top: 7px; left: 0; width: 22%; height: 2px; background: #7be3ff;"></div>
+            <div style="position: absolute; top: 0; left: 0; width: 1px; height: 5px; background: rgba(123,227,255,0.22);"></div>
+            <div style="position: absolute; top: 0; left: 25%; width: 1px; height: 5px; background: rgba(123,227,255,0.22);"></div>
+            <div style="position: absolute; top: 0; left: 50%; width: 1px; height: 5px; background: rgba(123,227,255,0.22);"></div>
+            <div style="position: absolute; top: 0; left: 75%; width: 1px; height: 5px; background: rgba(123,227,255,0.22);"></div>
+            <div style="position: absolute; top: 0; right: 0; width: 1px; height: 5px; background: rgba(123,227,255,0.22);"></div>
+            <div style="position: absolute; top: 2px; left: 22%; width: 5px; height: 13px; margin-left: -2px; background: #cdf2ff; box-shadow: 0 0 8px rgba(123,227,255,0.7);"></div>
+          </div>
+          <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #eaf6ff;">500 km</div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 66px minmax(0, 1fr) 62px; align-items: center; gap: 12px;">
+          <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.16em; color: rgba(200,225,240,0.38); text-transform: uppercase;">Inclin</div>
+          <div style="position: relative; height: 16px;">
+            <div style="position: absolute; top: 7px; left: 0; right: 0; height: 2px; background: rgba(123,227,255,0.12);"></div>
+            <div style="position: absolute; top: 7px; left: 0; width: 43%; height: 2px; background: #7be3ff;"></div>
+            <div style="position: absolute; top: 0; left: 0; width: 1px; height: 5px; background: rgba(123,227,255,0.22);"></div>
+            <div style="position: absolute; top: 0; left: 25%; width: 1px; height: 5px; background: rgba(123,227,255,0.22);"></div>
+            <div style="position: absolute; top: 0; left: 50%; width: 1px; height: 5px; background: rgba(123,227,255,0.22);"></div>
+            <div style="position: absolute; top: 0; left: 75%; width: 1px; height: 5px; background: rgba(123,227,255,0.22);"></div>
+            <div style="position: absolute; top: 0; right: 0; width: 1px; height: 5px; background: rgba(123,227,255,0.22);"></div>
+            <div style="position: absolute; top: 2px; left: 43%; width: 5px; height: 13px; margin-left: -2px; background: #cdf2ff; box-shadow: 0 0 8px rgba(123,227,255,0.7);"></div>
+          </div>
+          <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #eaf6ff;">51.6 deg</div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 66px minmax(0, 1fr) 62px; align-items: center; gap: 12px;">
+          <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.16em; color: rgba(200,225,240,0.38); text-transform: uppercase;">Roll cmd</div>
+          <div style="position: relative; height: 16px;">
+            <div style="position: absolute; top: 7px; left: 0; right: 0; height: 2px; background: rgba(123,227,255,0.12);"></div>
+            <div style="position: absolute; top: 7px; left: 50%; width: 0%; height: 2px; background: #7be3ff;"></div>
+            <div style="position: absolute; top: 0; left: 0; width: 1px; height: 5px; background: rgba(123,227,255,0.22);"></div>
+            <div style="position: absolute; top: 0; left: 25%; width: 1px; height: 5px; background: rgba(123,227,255,0.22);"></div>
+            <div style="position: absolute; top: -1px; left: 50%; width: 1px; height: 7px; background: rgba(123,227,255,0.45);"></div>
+            <div style="position: absolute; top: 0; left: 75%; width: 1px; height: 5px; background: rgba(123,227,255,0.22);"></div>
+            <div style="position: absolute; top: 0; right: 0; width: 1px; height: 5px; background: rgba(123,227,255,0.22);"></div>
+            <div style="position: absolute; top: 2px; left: 50%; width: 5px; height: 13px; margin-left: -2px; background: #cdf2ff; box-shadow: 0 0 8px rgba(123,227,255,0.7);"></div>
+          </div>
+          <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #eaf6ff;">0 deg</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 15px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
+        <div class="plate tick-b" style="padding: 10px 0; text-align: center; border: 1px solid rgba(123,227,255,0.16); background: rgba(123,227,255,0.03); font-size: 10px; font-weight: 700; letter-spacing: 0.16em; color: rgba(200,225,240,0.72); text-transform: uppercase;">Disturbance</div>
+        <div class="plate tick-b" style="padding: 10px 0; text-align: center; border: 1px solid rgba(255,176,32,0.42); background: rgba(255,176,32,0.07); font-size: 10px; font-weight: 700; letter-spacing: 0.16em; color: #ffb020; text-transform: uppercase;">Inject anomaly</div>
+        <div class="plate tick-b" style="padding: 10px 0; text-align: center; border: 1px solid rgba(123,227,255,0.16); background: rgba(123,227,255,0.03); font-size: 10px; font-weight: 700; letter-spacing: 0.16em; color: rgba(200,225,240,0.72); text-transform: uppercase;">Battery fault</div>
+        <div class="plate tick-b" style="padding: 10px 0; text-align: center; border: 1px solid rgba(123,227,255,0.16); background: rgba(123,227,255,0.03); font-size: 10px; font-weight: 700; letter-spacing: 0.16em; color: rgba(200,225,240,0.4); text-transform: uppercase;">Reset</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================= BOTTOM STATUS STRIP ======================= -->
+  <div style="position: absolute; left: 40px; right: 40px; bottom: 30px; display: flex; align-items: stretch; height: 44px; border: 1px solid rgba(123,227,255,0.13); background: rgba(4,10,16,0.74);">
+    <div style="display: flex; align-items: center; padding: 0 18px; background: rgba(63,214,140,0.1); border-right: 1px solid rgba(63,214,140,0.3);">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; letter-spacing: 0.2em; color: #3fd68c;">NOMINAL</div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 9px; padding: 0 18px; border-right: 1px solid rgba(123,227,255,0.09);">
+      <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.18em; color: rgba(200,225,240,0.36); text-transform: uppercase;">Sim UTC</div>
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #eaf6ff;">2026-09-13 11:27:43Z</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 9px; padding: 0 18px; border-right: 1px solid rgba(123,227,255,0.09);">
+      <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.18em; color: rgba(200,225,240,0.36); text-transform: uppercase;">Rate</div>
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #7be3ff;">&#215;60 REAL</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 9px; padding: 0 18px; border-right: 1px solid rgba(123,227,255,0.09);">
+      <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.18em; color: rgba(200,225,240,0.36); text-transform: uppercase;">Env</div>
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #3fd68c;">SUNLIT</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 9px; padding: 0 18px; border-right: 1px solid rgba(123,227,255,0.09);">
+      <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.18em; color: rgba(200,225,240,0.36); text-transform: uppercase;">Terminator</div>
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #eaf6ff;">T&#8722;00:31:18</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 9px; padding: 0 18px; border-right: 1px solid rgba(123,227,255,0.09);">
+      <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.18em; color: rgba(200,225,240,0.36); text-transform: uppercase;">Beta</div>
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #eaf6ff;">&#8722;34.3&#176;</div>
+    </div>
+
+    <div style="flex-grow: 1; display: flex; align-items: center; padding: 0 18px;">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.06em; color: rgba(200,225,240,0.28);">ICARUS IS A SIMULATION &#183; REAL OBJECTS PROPAGATED FROM PUBLIC ORBITAL ELEMENTS WITH SGP4</div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 9px; padding: 0 18px; border-left: 1px solid rgba(123,227,255,0.09);">
+      <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.18em; color: rgba(200,225,240,0.36); text-transform: uppercase;">Render</div>
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: rgba(200,225,240,0.62);">143 FPS &#183; 23 DC</div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

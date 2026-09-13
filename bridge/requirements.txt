@@ -1,0 +1,11 @@
+# ICARUS telemetry bridge
+#
+# websockets >= 13 provides the modern asyncio server API
+# (websockets.asyncio.server.serve). The legacy websockets.serve still exists
+# but is deprecated, and the bridge does not use it.
+#
+#   python -m pip install -r bridge/requirements.txt
+#
+# Nothing else is needed: the UDP side is the standard library's socket module
+# and the validation is hand-written against the telemetry contract.
+websockets>=13.0

@@ -1,0 +1,117 @@
+name: Deploy digital twin to GitHub Pages
+
+# Only the BROWSER APPLICATION is deployed. The C OBC, the Python bridge and
+# Open MCT are local engineering tools: GitHub Pages serves static files and
+# cannot run a server process, which is exactly why Browser-FSW exists.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time. Don't cancel a running one: a half-finished Pages
+# deploy is worse than a slightly stale one.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Test and build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Node LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm run test
+
+      # The C OBC is not deployed, but it IS part of the repository, and a
+      # commit that breaks its build should fail here rather than at an
+      # exhibition. Warnings are errors: this is the code a student reads.
+      - name: Build the Icarus OBC (C)
+        run: make -C fsw CFLAGS="-std=c99 -O2 -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wno-sign-conversion -Werror -D_POSIX_C_SOURCE=200809L -D_DEFAULT_SOURCE -MMD -MP"
+
+      - name: C OBC behavioural test
+        run: python3 tests/integration/obc_smoke.py ./icarus
+        env:
+          ICARUS_DIR: ${{ github.workspace }}/fsw
+
+      - name: Install bridge dependencies
+        run: python3 -m pip install --quiet -r bridge/requirements.txt
+
+      - name: Full pipeline test (C -> UDP -> bridge -> WebSocket)
+        run: python3 tests/integration/pipeline_test.py ./fsw/icarus
+
+      # BASE_PATH is read by vite.config.ts. Deriving it from the repository
+      # name means the bundle is correct whatever the repository is called,
+      # with no hard-coded path to forget to update.
+      - name: Build the static site
+        run: npm run build
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+
+      # A plain substring check is not enough. A mis-set BASE_PATH can produce
+      # something like /some/prefix/REPO/assets/..., which still CONTAINS the
+      # repository name and still 404s on Pages - that exact mistake happened
+      # during development and the substring grep passed it. Anchor on the
+      # opening quote so the prefix has to be exact, and separately assert that
+      # nothing is referenced from the domain root.
+      - name: Verify the build carries the deployment base path
+        run: |
+          set -euo pipefail
+          BASE="/${{ github.event.repository.name }}/"
+          echo "expecting every asset under exactly $BASE"
+
+          if ! grep -qE "(src|href)=\"${BASE}assets/" dist/index.html; then
+            echo "FAIL: no asset in dist/index.html sits under $BASE"
+            grep -oE '(src|href)="[^"]*"' dist/index.html || true
+            exit 1
+          fi
+
+          if grep -qE '(src|href)="/assets/' dist/index.html; then
+            echo "FAIL: an asset is referenced from the domain root; it will 404 on Pages"
+            exit 1
+          fi
+
+          test -f dist/fallback/orbital-data.json \
+            || { echo "FAIL: bundled orbital elements missing from dist"; exit 1; }
+
+          echo "base path and fallback data OK"
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

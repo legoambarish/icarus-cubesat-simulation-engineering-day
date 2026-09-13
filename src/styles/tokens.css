@@ -1,0 +1,131 @@
+/*
+ * ICARUS DIGITAL TWIN - design tokens
+ * ----------------------------------------------------------------------------
+ * The instrument-plate system (see design/ for the canvas this came from).
+ *
+ * THE ONE IDEA: a panel is a hairline rule plus four corner ticks over an ink
+ * wash - NOT a rounded translucent card. The Earth reads through it, and the
+ * frame looks like an instrument bezel rather than a dashboard widget. Every
+ * radius here is 0 or near it on purpose.
+ *
+ * COLOUR IS SEMANTIC, NEVER DECORATIVE
+ *   cyan   active / selected / the data path
+ *   green  nominal
+ *   amber  attention - degraded but flying
+ *   red    a set onboard fault flag, and nothing else
+ *
+ * TYPE
+ *   IBM Plex Mono   every number, code, timestamp and identifier
+ *   Archivo         every label, heading and button, at wide tracking
+ * Both are bundled as woff2 in src/styles/fonts.css - no network at showtime.
+ *
+ * Nothing critical is smaller than 16px-equivalent at the 1920x1080 projector
+ * target; the mono numerals run larger than the labels by design.
+ */
+
+:root {
+  /* ---- surface ---------------------------------------------------------- */
+  --c-void: #04070a;
+  --c-plate: rgba(4, 10, 16, 0.62);
+  --c-plate-solid: #060d15;
+  --c-plate-raised: rgba(12, 22, 33, 0.78);
+
+  /* Hairline rules. The tick colour is brighter than the edge on purpose:
+     the corners carry the frame, the edge only suggests it. */
+  --c-edge: rgba(123, 227, 255, 0.13);
+  --c-edge-strong: rgba(123, 227, 255, 0.34);
+  --c-tick: #7be3ff;
+  --c-rule: rgba(123, 227, 255, 0.1);
+
+  /* ---- type ------------------------------------------------------------- */
+  --c-text: #eaf6ff;
+  --c-text-dim: rgba(200, 225, 240, 0.62);
+  --c-text-faint: rgba(200, 225, 240, 0.38);
+  --c-text-ghost: rgba(200, 225, 240, 0.28);
+
+  /* ---- semantic --------------------------------------------------------- */
+  --c-accent: #7be3ff;
+  --c-accent-wash: rgba(123, 227, 255, 0.09);
+  --c-accent-line: rgba(123, 227, 255, 0.42);
+  --c-nominal: #3fd68c;
+  --c-nominal-wash: rgba(63, 214, 140, 0.1);
+  --c-nominal-line: rgba(63, 214, 140, 0.42);
+  --c-warn: #ffb020;
+  --c-warn-wash: rgba(255, 176, 32, 0.08);
+  --c-warn-line: rgba(255, 176, 32, 0.42);
+  --c-critical: #ff4d4f;
+  --c-critical-wash: rgba(255, 77, 79, 0.11);
+  --c-critical-line: rgba(255, 77, 79, 0.5);
+  --c-inactive: rgba(200, 225, 240, 0.22);
+
+  /* ---- object classes (orbit lines + marks + register swatches) --------- */
+  --c-obj-station: #ffd479;
+  --c-obj-cubesat: #8f7dff;
+  --c-obj-science: #7be3ff;
+  --c-obj-weather: #58c0a8;
+  --c-obj-imaging: #f28fb4;
+  --c-obj-icarus: #3fd68c;
+
+  /* ---- geometry --------------------------------------------------------- */
+  /* Instrument plates are square. The only rounding in the system is 2px on
+     the very small lamps and chips, and that is to stop them shimmering. */
+  --r-0: 0px;
+  --r-chip: 2px;
+  --tick-len: 11px;
+
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 26px;
+  --s-7: 34px;
+
+  /* ---- type scale (projector-first) ------------------------------------- */
+  --f-mono: 'IBM Plex Mono', 'SF Mono', 'Cascadia Mono', ui-monospace, monospace;
+  --f-ui: 'Archivo', 'Segoe UI Variable Display', system-ui, sans-serif;
+
+  --t-micro: 9px;      /* register indices, tick captions                    */
+  --t-label: 9.5px;    /* all-caps field labels - never a value              */
+  --t-head: 10px;      /* panel headings                                     */
+  --t-body: 10.5px;    /* mono detail lines                                  */
+  --t-mono-s: 11px;
+  --t-mono: 12.5px;
+  --t-value-s: 17px;
+  --t-value: 23px;
+  --t-value-lg: 34px;
+
+  --track-label: 0.2em;
+  --track-head: 0.22em;
+  --track-brand: 0.3em;
+
+  --shadow-plate: 0 22px 60px rgba(0, 0, 0, 0.62);
+
+  --dur-fast: 130ms;
+  --dur-med: 260ms;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* Laptop screens: step the numerics down, keep the labels legible. */
+@media (max-width: 1500px) {
+  :root {
+    --t-value-lg: 28px;
+    --t-value: 20px;
+    --t-value-s: 15px;
+    --t-mono: 11.5px;
+    --s-6: 20px;
+    --s-7: 26px;
+  }
+}
+
+@media (max-width: 1180px) {
+  :root {
+    --t-value-lg: 24px;
+    --t-value: 18px;
+    --t-value-s: 14px;
+    --t-mono: 11px;
+    --t-body: 10px;
+    --s-5: 14px;
+    --s-6: 16px;
+  }
+}

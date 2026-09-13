@@ -1,0 +1,13 @@
+{
+  "name": "icarus-openmct",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Open MCT engineering view for the Icarus CubeSat telemetry stream. Local tool only - it is deliberately NOT part of the GitHub Pages build.",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "openmct": "^4.3.1"
+  }
+}

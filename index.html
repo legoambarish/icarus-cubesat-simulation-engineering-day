@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <meta
+      name="description"
+      content="ICARUS Digital Twin - a 3D mission-control visualisation of real LEO orbital objects (SGP4) alongside a simulated 1U CubeSat driven by simulated onboard flight software."
+    />
+    <title>ICARUS Digital Twin - CubeSat Mission Control</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23070c14'/%3E%3Crect x='10' y='10' width='12' height='12' rx='1.5' fill='none' stroke='%235fd8ff' stroke-width='1.8'/%3E%3Cpath d='M10 16H3M29 16h-7' stroke='%234ce2a4' stroke-width='1.8'/%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="scene-canvas"></canvas>
+      <div id="vignette"></div>
+      <div id="safe-mode-frame"></div>
+      <div id="hover-label"></div>
+
+      <!-- The HUD is built by src/ui/*.ts so every value has exactly one owner. -->
+      <div id="hud"></div>
+
+      <div id="alert-banner">
+        <div class="bar"></div>
+        <div class="body">
+          <svg class="glyph" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3.2 22 20.4H2z" stroke-linejoin="round" />
+            <path d="M12 9.4v4.6" stroke-linecap="round" />
+            <path d="M12 17h.01" stroke-linecap="round" />
+          </svg>
+          <div class="txt">
+            <div class="ttl"></div>
+            <div class="dsc"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="boot">
+        <div class="bmark">ICARUS</div>
+        <div class="bsub">Digital twin initialising</div>
+        <div class="bbar"><i></i></div>
+      </div>
+
+      <div id="fatal">
+        <h1>WebGL 2 unavailable</h1>
+        <p id="fatal-detail">
+          This application renders with the Three.js WebGLRenderer, which requires WebGL 2. Your browser
+          or graphics driver did not provide a WebGL 2 context.
+        </p>
+        <p>
+          Try a current Chrome, Edge or Firefox build, enable hardware acceleration in the browser
+          settings, or check <code>chrome://gpu</code> for a blocked driver.
+        </p>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Archivo:wght@600;700&display=swap">
+  <style>
+    body { margin: 0; background: #04070a; }
+    a { color: #7be3ff; } a:hover { color: #b6f0ff; }
+    .l { font-family: 'Archivo', sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 0.2em; color: rgba(200,225,240,0.4); text-transform: uppercase; }
+    .n { font-family: 'IBM Plex Mono', monospace; color: #eaf6ff; }
+  </style>
+</helmet>
+
+<div style="position: relative; width: 1440px; height: 810px; background: #04070a; overflow: hidden; font-family: 'Archivo', system-ui, sans-serif;">
+
+  <div style="position: absolute; inset: 0; background: radial-gradient(800px 800px at 50% 44%, #0d3a5c 0%, #0a2a44 38%, #06121e 62%, #04070a 78%);"></div>
+  <div style="position: absolute; left: 50%; top: 42%; width: 720px; height: 720px; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(circle at 33% 30%, #2e6f8f 0%, #1b5273 26%, #0c3350 52%, #061c2d 72%, #030a11 88%); box-shadow: inset -60px -40px 150px rgba(0,0,0,0.85);"></div>
+  <div style="position: absolute; left: 50%; top: 42%; width: 860px; height: 250px; transform: translate(-50%, -50%) rotate(-16deg); border-radius: 50%; border: 1px solid rgba(123,227,255,0.22);"></div>
+  <div style="position: absolute; left: 50%; top: 42%; width: 830px; height: 760px; transform: translate(-50%, -50%) rotate(22deg); border-radius: 50%; border: 1px solid rgba(143,125,255,0.16);"></div>
+
+  <!-- minimal top bar -->
+  <div style="position: absolute; left: 0; right: 0; top: 0; height: 44px; display: flex; align-items: center; gap: 18px; padding: 0 26px; border-bottom: 1px solid rgba(123,227,255,0.12); background: rgba(4,10,16,0.55);">
+    <div style="font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 0.3em; color: #eaf6ff;">ICARUS</div>
+    <div style="width: 2px; height: 14px; background: #7be3ff;"></div>
+    <div class="l">Digital twin</div>
+    <div style="flex-grow: 1;"></div>
+    <div class="l">Orbit <span style="color:#3fd68c">LIVE</span></div>
+    <div class="l">FSW <span style="color:#7be3ff">LOCAL</span></div>
+    <div class="l">&#215;60 real</div>
+  </div>
+
+  <!-- the whole instrument set is one glareshield band -->
+  <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 232px; background: linear-gradient(to top, rgba(3,7,11,0.97), rgba(4,10,16,0.82)); border-top: 1px solid rgba(123,227,255,0.22);">
+    <div style="display: flex; height: 100%;">
+
+      <div style="width: 250px; padding: 18px 22px; border-right: 1px solid rgba(123,227,255,0.1);">
+        <div class="l" style="margin-bottom: 12px;">Selected</div>
+        <div style="font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: 0.1em; color: #eaf6ff;">ICARUS-1U</div>
+        <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.2em; color: #3fd68c; text-transform: uppercase; margin-top: 4px;">Simulated 1U CubeSat</div>
+        <div style="margin-top: 18px; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px;">
+          <div><div class="l">Alt</div><div class="n" style="font-size: 17px; margin-top: 3px;">500.0</div></div>
+          <div><div class="l">Vel</div><div class="n" style="font-size: 17px; margin-top: 3px;">7.617</div></div>
+          <div><div class="l">Inc</div><div class="n" style="font-size: 17px; margin-top: 3px;">51.60</div></div>
+          <div><div class="l">Per</div><div class="n" style="font-size: 17px; margin-top: 3px;">94.47</div></div>
+        </div>
+      </div>
+
+      <div style="flex-grow: 1; padding: 18px 24px; border-right: 1px solid rgba(123,227,255,0.1);">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 16px;">
+          <div class="l">Icarus telemetry</div>
+          <div style="flex-grow: 1; height: 1px; background: rgba(123,227,255,0.1);"></div>
+          <div style="padding: 4px 10px; border: 1px solid rgba(63,214,140,0.4); font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #3fd68c;">NOMINAL</div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 18px;">
+          <div><div class="l">Battery</div><div class="n" style="font-size: 26px; color: #3fd68c; margin-top: 5px;">83.9</div></div>
+          <div><div class="l">Solar W</div><div class="n" style="font-size: 26px; margin-top: 5px;">9.40</div></div>
+          <div><div class="l">Load W</div><div class="n" style="font-size: 26px; margin-top: 5px;">5.40</div></div>
+          <div><div class="l">Temp C</div><div class="n" style="font-size: 26px; margin-top: 5px;">17.5</div></div>
+          <div><div class="l">Vib g</div><div class="n" style="font-size: 26px; margin-top: 5px;">0.014</div></div>
+          <div><div class="l">Err deg</div><div class="n" style="font-size: 26px; color: #3fd68c; margin-top: 5px;">0.0</div></div>
+        </div>
+        <div style="margin-top: 20px; display: flex; gap: 18px; align-items: center;">
+          <svg viewBox="0 0 420 34" preserveAspectRatio="none" style="flex-grow: 1; height: 34px;">
+            <rect x="0" y="0" width="420" height="34" fill="rgba(123,227,255,0.03)"></rect>
+            <line x1="0" y1="17" x2="420" y2="17" stroke="rgba(123,227,255,0.12)" stroke-width="0.5" stroke-dasharray="2 4"></line>
+            <polyline points="0,28 40,26 80,22 120,17 160,12 200,10 240,12 280,16 320,21 360,25 420,22" fill="none" stroke="#7be3ff" stroke-width="1.4" vector-effect="non-scaling-stroke"></polyline>
+          </svg>
+          <svg viewBox="0 0 420 34" preserveAspectRatio="none" style="flex-grow: 1; height: 34px;">
+            <rect x="0" y="0" width="420" height="34" fill="rgba(123,227,255,0.03)"></rect>
+            <line x1="0" y1="17" x2="420" y2="17" stroke="rgba(123,227,255,0.12)" stroke-width="0.5" stroke-dasharray="2 4"></line>
+            <polyline points="0,25 40,23 80,26 120,24 160,22 200,25 240,23 280,26 320,24 360,22 420,25" fill="none" stroke="#ffb020" stroke-width="1.4" vector-effect="non-scaling-stroke"></polyline>
+          </svg>
+        </div>
+      </div>
+
+      <div style="width: 300px; padding: 18px 22px;">
+        <div class="l" style="margin-bottom: 14px;">Command deck</div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="l" style="width: 54px;">Alt</div>
+            <div style="flex-grow: 1; height: 2px; background: rgba(123,227,255,0.12); position: relative;"><div style="position:absolute; left:0; width:22%; height:2px; background:#7be3ff;"></div><div style="position:absolute; left:22%; top:-5px; width:5px; height:12px; background:#cdf2ff;"></div></div>
+            <div class="n" style="font-size: 11px; width: 46px; text-align: right;">500</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="l" style="width: 54px;">Inc</div>
+            <div style="flex-grow: 1; height: 2px; background: rgba(123,227,255,0.12); position: relative;"><div style="position:absolute; left:0; width:43%; height:2px; background:#7be3ff;"></div><div style="position:absolute; left:43%; top:-5px; width:5px; height:12px; background:#cdf2ff;"></div></div>
+            <div class="n" style="font-size: 11px; width: 46px; text-align: right;">51.6</div>
+          </div>
+        </div>
+        <div style="margin-top: 16px; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px;">
+          <div style="padding: 9px 0; text-align: center; border: 1px solid rgba(123,227,255,0.16); font-size: 9.5px; font-weight: 700; letter-spacing: 0.14em; color: rgba(200,225,240,0.7); text-transform: uppercase;">Disturb</div>
+          <div style="padding: 9px 0; text-align: center; border: 1px solid rgba(255,176,32,0.42); background: rgba(255,176,32,0.07); font-size: 9.5px; font-weight: 700; letter-spacing: 0.14em; color: #ffb020; text-transform: uppercase;">Anomaly</div>
+          <div style="padding: 9px 0; text-align: center; border: 1px solid rgba(123,227,255,0.16); font-size: 9.5px; font-weight: 700; letter-spacing: 0.14em; color: rgba(200,225,240,0.7); text-transform: uppercase;">Battery</div>
+          <div style="padding: 9px 0; text-align: center; border: 1px solid rgba(123,227,255,0.16); font-size: 9.5px; font-weight: 700; letter-spacing: 0.14em; color: rgba(200,225,240,0.4); text-transform: uppercase;">Reset</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="position: absolute; left: 26px; top: 60px; padding: 8px 12px; border: 1px solid rgba(123,227,255,0.2); background: rgba(4,10,16,0.7);">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; color: #7be3ff;">DIRECTION B &#183; CONSOLE BAND</div>
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; line-height: 1.6; color: rgba(200,225,240,0.42); margin-top: 6px; max-width: 300px;">
+      Every instrument in one glareshield strip. Earth is completely uninterrupted.<br>
+      Trade-off: the readouts are far from the object they describe, and the band eats 29% of a 16:9 frame.
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

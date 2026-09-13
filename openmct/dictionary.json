@@ -1,0 +1,153 @@
+{
+  "name": "ICARUS-1U",
+  "key": "icarus",
+  "_comment": [
+    "Telemetry dictionary for the Icarus 1U CubeSat simulator.",
+    "",
+    "Each measurement declares its `values`: one domain (the time axis) and one",
+    "or more ranges (the plotted quantity). OpenMCT uses `hints` to decide which",
+    "value is the x axis (domain: 1) and which is the y axis (range: 1); without",
+    "them a plot has nothing to draw.",
+    "",
+    "`source` is the key the realtime provider reads out of a telemetry packet,",
+    "which is why every one of them matches a path in the telemetry contract in",
+    "src/state/types.ts."
+  ],
+  "measurements": [
+    {
+      "name": "Battery state of charge",
+      "key": "power.battery_pct",
+      "units": "%",
+      "limits": { "rl": { "low": 12, "high": 101 } },
+      "values": [
+        { "key": "value", "name": "Value", "units": "%", "format": "float", "min": 0, "max": 100, "hints": { "range": 1 } },
+        { "key": "utc", "source": "timestamp", "name": "Time", "format": "utc", "hints": { "domain": 1 } }
+      ]
+    },
+    {
+      "name": "Solar input",
+      "key": "power.solar_w",
+      "units": "W",
+      "values": [
+        { "key": "value", "name": "Value", "units": "W", "format": "float", "min": 0, "max": 12, "hints": { "range": 1 } },
+        { "key": "utc", "source": "timestamp", "name": "Time", "format": "utc", "hints": { "domain": 1 } }
+      ]
+    },
+    {
+      "name": "Bus load",
+      "key": "power.load_w",
+      "units": "W",
+      "values": [
+        { "key": "value", "name": "Value", "units": "W", "format": "float", "min": 0, "max": 30, "hints": { "range": 1 } },
+        { "key": "utc", "source": "timestamp", "name": "Time", "format": "utc", "hints": { "domain": 1 } }
+      ]
+    },
+    {
+      "name": "Bus temperature",
+      "key": "thermal.temperature_c",
+      "units": "degC",
+      "limits": { "rl": { "low": -30, "high": 58 } },
+      "values": [
+        { "key": "value", "name": "Value", "units": "degC", "format": "float", "min": -40, "max": 90, "hints": { "range": 1 } },
+        { "key": "utc", "source": "timestamp", "name": "Time", "format": "utc", "hints": { "domain": 1 } }
+      ]
+    },
+    {
+      "name": "Vibration",
+      "key": "vibration.g",
+      "units": "g",
+      "values": [
+        { "key": "value", "name": "Value", "units": "g", "format": "float", "min": 0, "max": 0.2, "hints": { "range": 1 } },
+        { "key": "utc", "source": "timestamp", "name": "Time", "format": "utc", "hints": { "domain": 1 } }
+      ]
+    },
+    {
+      "name": "Altitude",
+      "key": "orbit.altitude_km",
+      "units": "km",
+      "values": [
+        { "key": "value", "name": "Value", "units": "km", "format": "float", "min": 0, "max": 2000, "hints": { "range": 1 } },
+        { "key": "utc", "source": "timestamp", "name": "Time", "format": "utc", "hints": { "domain": 1 } }
+      ]
+    },
+    {
+      "name": "Velocity",
+      "key": "orbit.velocity_km_s",
+      "units": "km/s",
+      "values": [
+        { "key": "value", "name": "Value", "units": "km/s", "format": "float", "min": 6, "max": 9, "hints": { "range": 1 } },
+        { "key": "utc", "source": "timestamp", "name": "Time", "format": "utc", "hints": { "domain": 1 } }
+      ]
+    },
+    {
+      "name": "Inclination",
+      "key": "orbit.inclination_deg",
+      "units": "deg",
+      "values": [
+        { "key": "value", "name": "Value", "units": "deg", "format": "float", "min": 0, "max": 180, "hints": { "range": 1 } },
+        { "key": "utc", "source": "timestamp", "name": "Time", "format": "utc", "hints": { "domain": 1 } }
+      ]
+    },
+    {
+      "name": "Roll",
+      "key": "attitude.roll_deg",
+      "units": "deg",
+      "values": [
+        { "key": "value", "name": "Value", "units": "deg", "format": "float", "min": -180, "max": 180, "hints": { "range": 1 } },
+        { "key": "utc", "source": "timestamp", "name": "Time", "format": "utc", "hints": { "domain": 1 } }
+      ]
+    },
+    {
+      "name": "Pitch",
+      "key": "attitude.pitch_deg",
+      "units": "deg",
+      "values": [
+        { "key": "value", "name": "Value", "units": "deg", "format": "float", "min": -180, "max": 180, "hints": { "range": 1 } },
+        { "key": "utc", "source": "timestamp", "name": "Time", "format": "utc", "hints": { "domain": 1 } }
+      ]
+    },
+    {
+      "name": "Yaw",
+      "key": "attitude.yaw_deg",
+      "units": "deg",
+      "values": [
+        { "key": "value", "name": "Value", "units": "deg", "format": "float", "min": -180, "max": 180, "hints": { "range": 1 } },
+        { "key": "utc", "source": "timestamp", "name": "Time", "format": "utc", "hints": { "domain": 1 } }
+      ]
+    },
+    {
+      "name": "Pointing error",
+      "key": "attitude.target_error_deg",
+      "units": "deg",
+      "limits": { "rl": { "low": -1, "high": 75 } },
+      "values": [
+        { "key": "value", "name": "Value", "units": "deg", "format": "float", "min": 0, "max": 180, "hints": { "range": 1 } },
+        { "key": "utc", "source": "timestamp", "name": "Time", "format": "utc", "hints": { "domain": 1 } }
+      ]
+    },
+    {
+      "name": "Flight state",
+      "key": "state",
+      "values": [
+        { "key": "value", "name": "State", "format": "string", "hints": { "range": 1 } },
+        { "key": "utc", "source": "timestamp", "name": "Time", "format": "utc", "hints": { "domain": 1 } }
+      ]
+    },
+    {
+      "name": "Eclipse",
+      "key": "environment.eclipse",
+      "values": [
+        { "key": "value", "name": "Eclipse", "format": "float", "min": 0, "max": 1, "hints": { "range": 1 } },
+        { "key": "utc", "source": "timestamp", "name": "Time", "format": "utc", "hints": { "domain": 1 } }
+      ]
+    },
+    {
+      "name": "Fault code",
+      "key": "fault.code",
+      "values": [
+        { "key": "value", "name": "Fault", "format": "string", "hints": { "range": 1 } },
+        { "key": "utc", "source": "timestamp", "name": "Time", "format": "utc", "hints": { "domain": 1 } }
+      ]
+    }
+  ]
+}

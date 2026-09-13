@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ICARUS - Engineering View (Open MCT)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!--
+      Open MCT is served from the local node_modules by server.js. It is a
+      LOCAL ENGINEERING TOOL and is deliberately not part of the GitHub Pages
+      build: the public site is the cinematic twin only.
+    -->
+    <script src="node_modules/openmct/dist/openmct.js"></script>
+
+    <style>
+      html, body { margin: 0; height: 100%; background: #0b0b0b; }
+      #icarus-banner {
+        position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+        padding: 5px 14px; font: 11px/1.5 ui-monospace, monospace;
+        letter-spacing: 0.06em; color: #9fb4c7;
+        background: rgba(8, 14, 20, 0.94); border-top: 1px solid rgba(123, 227, 255, 0.2);
+      }
+      #icarus-banner b { color: #7be3ff; font-weight: 600; }
+    </style>
+  </head>
+  <body>
+    <!-- Honesty, in the engineering view as much as in the exhibition one. -->
+    <div id="icarus-banner">
+      <b>ICARUS ENGINEERING VIEW</b> &middot; live telemetry from the Icarus OBC simulator via
+      the UDP&rarr;WebSocket bridge &middot; ICARUS is a simulated 1U CubeSat, not a spacecraft in
+      orbit &middot; history is a per-session in-memory buffer, not a database
+    </div>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

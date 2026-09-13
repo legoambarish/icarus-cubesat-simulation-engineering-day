@@ -1,0 +1,33 @@
+{
+  "pages": [
+    { "id": "page-1", "name": "Screens" },
+    { "id": "page-2", "name": "Instrument system" },
+    { "id": "page-3", "name": "Directions" }
+  ],
+  "artboards": [
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 1920, "h": 1080, "page": "page-1", "title": "Mission control - nominal" },
+    { "file": "SafeMode.dc.html", "x": 2040, "y": 0, "w": 1920, "h": 1080, "page": "page-1", "title": "Mission control - safe mode" },
+    { "file": "Components.dc.html", "x": 0, "y": 0, "w": 1500, "h": 1600, "page": "page-2", "title": "Instrument system" },
+    { "file": "DirectionB.dc.html", "x": 0, "y": 0, "w": 1440, "h": 810, "page": "page-3", "title": "Direction B - console band" },
+    { "file": "DirectionC.dc.html", "x": 1560, "y": 0, "w": 1440, "h": 810, "page": "page-3", "title": "Direction C - graticule field" }
+  ],
+  "annotations": [
+    {
+      "id": "brief",
+      "x": 0,
+      "y": -190,
+      "w": 620,
+      "page": "page-1",
+      "text": "ICARUS mission control, 1920x1080.\n\nThe move: plates, not cards. A panel is one hairline rule plus four corner ticks over an ink wash, so the Earth reads through it - no rounded glass cards, no blur.\n\nType: IBM Plex Mono for every number, Archivo at wide tracking for every label.\n\nSafe mode is on the artboard to the right."
+    },
+    {
+      "id": "directions-note",
+      "x": 0,
+      "y": -150,
+      "w": 620,
+      "page": "page-3",
+      "text": "Two alternatives that were considered and not taken, kept so the choice is visible. Each names its own trade-off on the artboard."
+    }
+  ],
+  "launch": { "view": "canvas", "page": "page-1" }
+}

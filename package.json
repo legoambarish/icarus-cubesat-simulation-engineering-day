@@ -1,0 +1,32 @@
+{
+  "name": "cubesat-digital-twin",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "ICARUS CubeSat Digital Twin - interactive 3D mission-control visualisation with a simulated onboard flight-software telemetry source.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "bridge": "python bridge/bridge.py",
+    "openmct": "node openmct/server.js"
+  },
+  "dependencies": {
+    "@fontsource/archivo": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "motion": "^13.2.0",
+    "satellite.js": "^7.1.0",
+    "three": "^0.186.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.5.1",
+    "@types/three": "^0.186.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.0"
+  }
+}

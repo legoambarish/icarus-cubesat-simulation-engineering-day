@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Archivo:wght@600;700&display=swap">
+  <style>
+    body { margin: 0; background: #04070a; }
+    a { color: #7be3ff; } a:hover { color: #b6f0ff; }
+    .l { font-family: 'Archivo', sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 0.2em; color: rgba(200,225,240,0.38); text-transform: uppercase; }
+    .n { font-family: 'IBM Plex Mono', monospace; color: #eaf6ff; }
+    .lead { position: absolute; height: 1px; background: rgba(123,227,255,0.3); }
+  </style>
+</helmet>
+
+<div style="position: relative; width: 1440px; height: 810px; background: #04070a; overflow: hidden; font-family: 'Archivo', system-ui, sans-serif;">
+
+  <div style="position: absolute; inset: 0; background: radial-gradient(800px 800px at 50% 50%, #0d3a5c 0%, #0a2a44 38%, #06121e 62%, #04070a 78%);"></div>
+
+  <!-- full-frame graticule: the instrument IS the whole screen -->
+  <div style="position: absolute; inset: 0; background-image:
+      linear-gradient(rgba(123,227,255,0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(123,227,255,0.045) 1px, transparent 1px);
+      background-size: 60px 60px;"></div>
+  <div style="position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(123,227,255,0.12);"></div>
+  <div style="position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background: rgba(123,227,255,0.12);"></div>
+
+  <div style="position: absolute; left: 50%; top: 50%; width: 640px; height: 640px; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(circle at 33% 30%, #2e6f8f 0%, #1b5273 26%, #0c3350 52%, #061c2d 72%, #030a11 88%); box-shadow: inset -55px -35px 140px rgba(0,0,0,0.85);"></div>
+  <div style="position: absolute; left: 50%; top: 50%; width: 780px; height: 230px; transform: translate(-50%, -50%) rotate(-16deg); border-radius: 50%; border: 1px solid rgba(123,227,255,0.2);"></div>
+
+  <!-- leader-line readouts hung directly off the scene -->
+  <div style="position: absolute; left: 300px; top: 168px;">
+    <div class="l">Battery</div>
+    <div style="display: flex; align-items: baseline; gap: 4px; margin-top: 4px;"><div class="n" style="font-size: 30px; color: #3fd68c;">83.9</div><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:rgba(63,214,140,0.6);">%</div></div>
+  </div>
+  <div class="lead" style="left: 300px; top: 216px; width: 200px;"></div>
+  <div style="position: absolute; left: 496px; top: 212px; width: 7px; height: 7px; transform: rotate(45deg); background: #3fd68c;"></div>
+
+  <div style="position: absolute; left: 300px; top: 300px;">
+    <div class="l">Bus temp</div>
+    <div style="display: flex; align-items: baseline; gap: 4px; margin-top: 4px;"><div class="n" style="font-size: 30px;">17.5</div><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:rgba(200,225,240,0.4);">C</div></div>
+  </div>
+  <div class="lead" style="left: 300px; top: 348px; width: 168px;"></div>
+
+  <div style="position: absolute; right: 300px; top: 200px; text-align: right;">
+    <div class="l">Altitude</div>
+    <div style="display: flex; align-items: baseline; gap: 4px; margin-top: 4px; justify-content: flex-end;"><div class="n" style="font-size: 30px;">500.0</div><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:rgba(200,225,240,0.4);">km</div></div>
+  </div>
+  <div class="lead" style="right: 300px; top: 248px; width: 190px;"></div>
+
+  <div style="position: absolute; right: 300px; top: 330px; text-align: right;">
+    <div class="l">Velocity</div>
+    <div style="display: flex; align-items: baseline; gap: 4px; margin-top: 4px; justify-content: flex-end;"><div class="n" style="font-size: 30px;">7.617</div><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:rgba(200,225,240,0.4);">km/s</div></div>
+  </div>
+  <div class="lead" style="right: 300px; top: 378px; width: 160px;"></div>
+
+  <div style="position: absolute; left: 50%; bottom: 108px; transform: translateX(-50%); display: flex; gap: 46px;">
+    <div style="text-align: center;"><div class="l">Solar</div><div class="n" style="font-size: 18px; margin-top: 4px; color: #3fd68c;">9.40 W</div></div>
+    <div style="text-align: center;"><div class="l">Load</div><div class="n" style="font-size: 18px; margin-top: 4px;">5.40 W</div></div>
+    <div style="text-align: center;"><div class="l">Vib</div><div class="n" style="font-size: 18px; margin-top: 4px;">0.014 g</div></div>
+    <div style="text-align: center;"><div class="l">Err</div><div class="n" style="font-size: 18px; margin-top: 4px; color: #3fd68c;">0.0&#176;</div></div>
+    <div style="text-align: center;"><div class="l">Env</div><div class="n" style="font-size: 18px; margin-top: 4px; color: #3fd68c;">SUNLIT</div></div>
+  </div>
+
+  <div style="position: absolute; left: 34px; top: 30px; display: flex; align-items: flex-end; gap: 12px;">
+    <div style="font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 22px; letter-spacing: 0.3em; color: #eaf6ff;">ICARUS</div>
+    <div style="width: 2px; height: 16px; background: #7be3ff;"></div>
+    <div class="l" style="padding-bottom: 2px;">Digital twin</div>
+  </div>
+
+  <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 40px; display: flex; align-items: center; gap: 24px; padding: 0 34px; border-top: 1px solid rgba(123,227,255,0.14); background: rgba(4,10,16,0.6);">
+    <div class="l">Nominal</div>
+    <div class="n" style="font-size: 11px;">2026-09-13 11:27:43Z</div>
+    <div class="l">&#215;60 real</div>
+    <div style="flex-grow: 1;"></div>
+    <div class="l">Orbit LIVE &#183; FSW LOCAL</div>
+  </div>
+
+  <div style="position: absolute; left: 34px; bottom: 82px; padding: 8px 12px; border: 1px solid rgba(123,227,255,0.2); background: rgba(4,10,16,0.75);">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; color: #7be3ff;">DIRECTION C &#183; GRATICULE FIELD</div>
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; line-height: 1.6; color: rgba(200,225,240,0.42); margin-top: 6px; max-width: 300px;">
+      No panels at all. Readouts hang off leader lines on a full-frame graticule, like an oscilloscope overlay.<br>
+      Trade-off: beautiful and unmistakable, but it holds far less - the object register, the fault log and the command deck have nowhere to live.
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

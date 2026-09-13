@@ -1,0 +1,27 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+.vite
+
+# C build output
+fsw/build/
+fsw/icarus
+fsw/icarus.exe
+*.o
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OpenMCT local install
+openmct/node_modules/
+
+# Logs / scratch
+*.log
+
+# Cross-compiled binary (rebuild with: make -C fsw)
+fsw/icarus.exe
