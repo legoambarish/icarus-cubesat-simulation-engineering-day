@@ -262,7 +262,7 @@ export class BrowserFsw {
    * ADCS engages - that is what makes the recovery legible.
    */
   injectAttitudeDisturbance(): void {
-    const mag = 7.5 * (Math.PI / 180); // deg/s -> rad/s
+    const mag = 8.0 * (Math.PI / 180); // deg/s -> rad/s
     this.omega.set(
       (this.rand() * 2 - 1) * mag,
       (this.rand() * 2 - 1) * mag,
