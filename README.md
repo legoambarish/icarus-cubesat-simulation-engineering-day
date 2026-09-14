@@ -51,8 +51,11 @@ For the local pipeline:
 The C simulator is optional. The browser simulator provides the complete public demo.
 
 ## Quick start: browser mode
+To run the frontend UI on your local system(No Backend):
 
-From the repository root:
+1\. Clone this repository.
+
+2\. From the repository root:
 
 ```bash
 npm ci
@@ -62,6 +65,8 @@ npm run dev
 Open the local URL printed by Vite, normally `http://127.0.0.1:5173/`.
 
 The browser mode does not require Python, a C compiler, Open MCT, or a running bridge.
+
+3\. Open the localhost URL on browser.
 
 ## Production build
 
