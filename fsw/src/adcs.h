@@ -14,8 +14,9 @@
  *   omega += (tau / I) * dt
  *   q     += 0.5 * q (x) (0, omega) * dt,  then renormalised
  *
- * NOT flight-qualified: no sensors, no estimator, no momentum management, no
- * disturbance torques. It demonstrates a closed loop, nothing more.
+ * NOT flight-qualified: no sensors, no estimator, no momentum management, and
+ * no separation of individual disturbance-torque sources. It demonstrates a
+ * closed loop with one bounded aggregate environmental torque.
  */
 void adcs_update(IcarusState *s, double dt);
 

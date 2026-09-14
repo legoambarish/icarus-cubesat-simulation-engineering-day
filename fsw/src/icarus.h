@@ -125,6 +125,12 @@
 #define ADCS_SETTLED_ERROR_RAD  (0.6 * DEG2RAD)
 #define ADCS_SETTLED_RATE_RAD_S (0.35 * DEG2RAD)
 #define DISTURBANCE_RATE_DEG_S  7.5
+#define ENV_TORQUE_X_NM         0.018
+#define ENV_TORQUE_Y_NM         0.014
+#define ENV_TORQUE_Z_NM         0.011
+#define ENV_TORQUE_FAST_X_NM    0.004
+#define ENV_TORQUE_FAST_Y_NM    0.003
+#define ENV_TORQUE_FAST_Z_NM    0.003
 
 /* ---- limits on commanded values (same as fsw/commands.ts) -------------- */
 #define ALT_MIN_KM   200.0

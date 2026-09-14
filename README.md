@@ -227,6 +227,14 @@ not independent counters:
 | `ROLL`, `PITCH`, `YAW` | Current quaternion converted to ZYX Euler angles; commands and disturbances are flown through the controller |
 | `POINT ERR` | Angular distance between current and commanded attitude; it drives the solar projection term and ADCS state |
 
+Nominal attitude is intentionally observable rather than mathematically frozen.
+The simulator applies a small, bounded aggregate of environmental torques whose
+orbital component follows true anomaly and whose smaller real-time component
+represents unresolved disturbance sources. The reaction-wheel controller
+corrects that motion continuously, so the displayed angles move around the
+commanded attitude while remaining bounded. These torque amplitudes are scaled
+for the educational display and are not flight values for a specific CubeSat.
+
 The result is a useful engineering demonstrator rather than flight-qualified flight
 software. The solar projection follows the cosine dependence described in NASA's small
 spacecraft power reference, while the attitude side uses a deliberately readable

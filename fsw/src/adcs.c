@@ -23,9 +23,9 @@
  * WHAT A FLIGHT IMPLEMENTATION WOULD ADD
  *   real sensors with noise and bias (sun sensor, magnetometer, gyro), an
  *   attitude estimator (EKF or QUEST), actuator models with momentum build-up
- *   and magnetorquer desaturation, disturbance torques (gravity gradient,
- *   aerodynamic, solar radiation pressure, residual magnetic dipole), and
- *   proper stability margins.
+ *   and magnetorquer desaturation, separate models for each disturbance
+ *   source, and proper stability margins. This demo uses one bounded aggregate
+ *   disturbance torque so nominal attitude remains observable on the display.
  */
 
 #include "adcs.h"
@@ -93,6 +93,20 @@ static double attitude_error_angle_deg(const double current[4], const double tar
     return 2.0 * acos(w) * RAD2DEG;
 }
 
+/* Bounded aggregate of environmental torques, scaled for the exhibit. */
+static void environmental_disturbance_torque(const IcarusState *s, double out[3])
+{
+    double t = s->t_s;
+    double phase = s->true_anomaly_rad;
+
+    out[0] = ENV_TORQUE_X_NM * sin(phase + 0.35)
+           + ENV_TORQUE_FAST_X_NM * sin(t * 0.37);
+    out[1] = ENV_TORQUE_Y_NM * cos(phase * 1.17 - 0.8)
+           + ENV_TORQUE_FAST_Y_NM * cos(t * 0.29);
+    out[2] = ENV_TORQUE_Z_NM * sin(phase * 0.83 + 1.7)
+           + ENV_TORQUE_FAST_Z_NM * sin(t * 0.47);
+}
+
 void adcs_set_target_rpy(IcarusState *s, double roll_deg, double pitch_deg, double yaw_deg)
 {
     /* ZYX: R = Rz(yaw) * Ry(pitch) * Rx(roll). */
@@ -154,7 +168,7 @@ void adcs_inject_disturbance(IcarusState *s)
 
 void adcs_update(IcarusState *s, double dt)
 {
-    double err_vec[3], torque[3], demand, dq[4], qn[4];
+    double err_vec[3], torque[3], disturbance[3], demand, dq[4], qn[4];
     double error_rad, omega_len;
     int i;
 
@@ -171,6 +185,8 @@ void adcs_update(IcarusState *s, double dt)
         s->adcs_enabled = 1;
         icarus_set_state(s, STATE_ADCS_ACTIVE);
     }
+
+    environmental_disturbance_torque(s, disturbance);
 
     if (s->adcs_enabled) {
         attitude_error_vector(s->q, s->q_target, err_vec);
@@ -190,6 +206,8 @@ void adcs_update(IcarusState *s, double dt)
         /* Rigid body, diagonal inertia: omega_dot = tau / I. */
         for (i = 0; i < 3; i++) {
             s->omega_rad_s[i] += (torque[i] / ADCS_INERTIA) * dt;
+            /* Environmental torque acts on the body, not the wheel. */
+            s->omega_rad_s[i] += (disturbance[i] / ADCS_INERTIA) * dt;
         }
 
         s->wheel_activity += (icarus_clamp(demand / ADCS_MAX_TORQUE, 0.0, 1.0)

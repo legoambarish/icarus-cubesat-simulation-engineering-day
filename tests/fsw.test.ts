@@ -363,6 +363,24 @@ describe('eclipse drives power and thermal', () => {
 });
 
 describe('attitude disturbance and ADCS recovery', () => {
+  it('shows bounded nominal attitude motion from environmental torques', () => {
+    const fsw = makeFsw();
+    const samples: number[] = [];
+    for (let i = 0; i < 600; i++) {
+      fsw.advance(SIM_STEP_S);
+      const p = fsw.snapshot().packet;
+      samples.push(
+        Math.abs(p.attitude.roll_deg)
+        + Math.abs(p.attitude.pitch_deg)
+        + Math.abs(p.attitude.yaw_deg),
+      );
+    }
+
+    expect(Math.max(...samples)).toBeGreaterThan(0.2);
+    expect(Math.max(...samples)).toBeLessThan(12);
+    expect(fsw.snapshot().packet.attitude.target_error_deg).toBeLessThan(6);
+  });
+
   it('walks the documented state sequence and drives the error back down', () => {
     const fsw = makeFsw();
     run(fsw, 2);

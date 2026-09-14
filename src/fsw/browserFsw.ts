@@ -23,6 +23,7 @@
  *  thermal  first order: dT/dt = (T_eq - T)/tau + Q_anomaly/C
  *  vibration baseline + deterministic noise + ADCS/anomaly excitation
  *  attitude quaternion integration + PD reaction-wheel controller
+ *  disturbances bounded environmental torques continuously corrected by ADCS
  *  fault    threshold detection -> SAFE MODE -> load shedding -> recovery
  */
 
@@ -43,7 +44,7 @@ import {
   quaternionFromRpyDeg,
   rpyDegFromQuaternion,
 } from '../adcs/attitude.ts';
-import { isSettled, stepAttitude } from '../adcs/controller.ts';
+import { environmentalDisturbanceTorque, isSettled, stepAttitude } from '../adcs/controller.ts';
 
 /* ==========================================================================
  * Constants - MIRRORED IN fsw/src/*.h. Change both or neither.
@@ -188,6 +189,7 @@ export class BrowserFsw {
   private adcsEnabled = true;
   private wheelActivity = 0;
   private attitudeErrorPeakDeg = 0;
+  private readonly disturbanceTorque = new Vector3();
 
   /* ---- subsystems ---- */
   private batteryPct: number;
@@ -365,7 +367,15 @@ export class BrowserFsw {
       this.setState('ADCS_ACTIVE');
     }
 
-    const adcs = stepAttitude(this.q, this.qTarget, this.omega, dt, this.adcsEnabled);
+    environmentalDisturbanceTorque(this.simTimeS, this.trueAnomaly, this.disturbanceTorque);
+    const adcs = stepAttitude(
+      this.q,
+      this.qTarget,
+      this.omega,
+      dt,
+      this.adcsEnabled,
+      this.disturbanceTorque,
+    );
     this.wheelActivity = this.wheelActivity * 0.85 + adcs.wheelActivity * 0.15;
 
     /* ---- 4. power -------------------------------------------------------

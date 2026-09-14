@@ -20,8 +20,7 @@
  * What a flight-qualified implementation would add: real sensors (sun sensor,
  * magnetometer, gyro) with noise and bias, an attitude estimator (EKF/QUEST),
  * actuator models with momentum build-up and magnetorquer desaturation,
- * disturbance torques (gravity gradient, aerodynamic, solar pressure, residual
- * dipole), and rigorous stability margins.
+ * separate models for each disturbance source, and rigorous stability margins.
  */
 
 import { Quaternion, Vector3 } from 'three';
@@ -48,6 +47,25 @@ export const INERTIA = 0.66;
 export const SETTLED_RATE_RAD_S = 0.35 * (Math.PI / 180);
 /** Pointing error below which the loop is considered settled [rad]. */
 export const SETTLED_ERROR_RAD = 0.6 * (Math.PI / 180);
+
+/**
+ * Small, bounded environmental torques used by the demonstrator. A real
+ * spacecraft sees gravity-gradient, aerodynamic, solar-pressure and magnetic
+ * disturbance torques; leaving all of them at exactly zero makes a nominal
+ * attitude look frozen forever. These amplitudes are deliberately scaled for
+ * the exhibit's slower educational inertia, not presented as a flight value.
+ */
+export function environmentalDisturbanceTorque(
+  realTimeS: number,
+  orbitalPhaseRad: number,
+  out = new Vector3(),
+): Vector3 {
+  return out.set(
+    0.018 * Math.sin(orbitalPhaseRad + 0.35) + 0.004 * Math.sin(realTimeS * 0.37),
+    0.014 * Math.cos(orbitalPhaseRad * 1.17 - 0.8) + 0.003 * Math.cos(realTimeS * 0.29),
+    0.011 * Math.sin(orbitalPhaseRad * 0.83 + 1.7) + 0.003 * Math.sin(realTimeS * 0.47),
+  );
+}
 
 export interface ControlOutput {
   /** Applied torque after saturation, body frame, N.m. */
@@ -100,6 +118,7 @@ export function stepAttitude(
   omegaRadS: Vector3,
   dt: number,
   enabled: boolean,
+  disturbanceTorque = new Vector3(),
 ): AdcsStepResult {
   let torqueMagnitude = 0;
   let saturated = false;
@@ -110,6 +129,10 @@ export function stepAttitude(
     saturated = c.saturated;
     // omega += (tau / I) * dt
     omegaRadS.addScaledVector(c.torque, dt / INERTIA);
+    // External torque acts on the body separately from the wheel command.
+    // Keeping this outside computeTorque preserves a meaningful wheel-load
+    // signal while allowing nominal attitude to move and be corrected.
+    omegaRadS.addScaledVector(disturbanceTorque, dt / INERTIA);
   } else {
     // Free drift with a very small residual damping so an un-commanded
     // spacecraft does not spin for ever (aero drag + eddy currents, loosely).
