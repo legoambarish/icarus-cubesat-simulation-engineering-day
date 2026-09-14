@@ -1,4 +1,4 @@
-# ICARUS — CubeSat Digital Twin
+# ICARUS - CubeSat Digital Twin
 
 ICARUS is an educational CubeSat simulation for an Engineers' Day exhibition. It has a
 browser-based digital twin, a separate C flight-software simulator, and a Python bridge
