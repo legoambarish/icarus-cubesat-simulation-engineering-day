@@ -3,9 +3,9 @@
  * Serve dist/ the way GitHub Pages serves a PROJECT page: under a repository
  * sub-path, with nothing at the domain root.
  *
- *     BASE_PATH=/cubesat-digital-twin/ npm run build
+ *     BASE_PATH=/icarus-cubesat-simulation-engineering-day/ npm run build
  *     node scripts/serve-pages.mjs
- *     http://127.0.0.1:4173/cubesat-digital-twin/
+ *     http://127.0.0.1:4173/icarus-cubesat-simulation-engineering-day/
  *
  * Why this exists: `npm run preview` serves at the root by default, which
  * hides exactly the class of bug this is meant to catch - an asset referenced
@@ -13,7 +13,7 @@
  * Pages. Testing the real sub-path locally is the only way to be sure before
  * pushing.
  *
- * Env: BASE_PATH (default /cubesat-digital-twin/), PORT (default 4173).
+ * Env: BASE_PATH (default /icarus-cubesat-simulation-engineering-day/), PORT (default 4173).
  */
 
 import { createServer } from 'node:http';
@@ -23,7 +23,7 @@ import { extname, join, normalize, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const DIST = resolve(fileURLToPath(new URL('../dist', import.meta.url)));
-const BASE = (process.env.BASE_PATH ?? '/cubesat-digital-twin/').replace(/\/*$/, '/');
+const BASE = (process.env.BASE_PATH ?? '/icarus-cubesat-simulation-engineering-day/').replace(/\/*$/, '/');
 const PORT = Number(process.env.PORT ?? 4173);
 const HOST = '127.0.0.1';
 
