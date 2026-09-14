@@ -815,27 +815,27 @@ input[type="range"][disabled] { opacity: 0.32; pointer-events: none; }
   #object-list { display: none; }
 }
 
-/* Shorter still: the traces go, and the plate tightens up. */
+/* Shorter still: optional traces go, while the requested live telemetry stays
+   above the command deck. */
 @media (max-height: 820px) {
   #hud { padding: var(--s-4) var(--s-5) var(--s-3); }
-  #telemetry .spark-row { display: none; }
-  #telemetry .tm-section:nth-of-type(3) { display: none; }
+  #telemetry .tm-traces { display: none; }
   .plate-body { padding: 12px var(--s-4) var(--s-3); }
   .tm-section { margin-top: 10px; padding-top: 10px; }
   .deck { margin-top: 10px; padding-top: 10px; }
   .tape { height: 54px; }
 }
 
-/* Very short (a 16:10 laptop in a browser with lots of chrome): the attitude
-   bank goes too. The pointing error is still on the alert line when it
-   matters, and every power and thermal value is still on screen. */
+/* Very short (a 16:10 laptop in a browser with lots of chrome): keep both
+   primary telemetry banks visible and trim only the optional roll command. */
 @media (max-height: 700px) {
   #identity { padding: 13px var(--s-4) var(--s-3); }
   .brand-mark { font-size: 21px; }
   .status-rows { margin-top: var(--s-3); gap: var(--s-2); }
   .profile-foot { display: none; }
   .deck-rows .slider-row:nth-child(3) { display: none; }
-  #telemetry .tm-section:nth-of-type(2) { display: none; }
+  #telemetry .tm-section { margin-top: 8px; padding-top: 8px; }
+  #telemetry .tm-grid-4 { gap: var(--s-2); }
 }
 
 @media (max-width: 900px) {

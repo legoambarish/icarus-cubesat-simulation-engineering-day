@@ -197,11 +197,11 @@ export function createTelemetryPanel(handlers: TelemetryHandlers): TelemetryPane
         el('div', { class: 'tape-cell' }, [tempTape.root, temperature.root]),
       ]),
 
-      el('div', { class: 'tm-section' }, [
+      el('div', { class: 'tm-section tm-power' }, [
         el('div', { class: 'tm-grid-4' }, [solar.root, load.root, vibration.root, illumination.root]),
       ]),
 
-      el('div', { class: 'tm-section' }, [
+      el('div', { class: 'tm-section tm-attitude' }, [
         el('div', { class: 'spark-row', style: 'margin-bottom:11px' }, [
           el('div', { class: 'label' }, ['Attitude']),
           el('div', { class: 'rule' }),
@@ -210,7 +210,7 @@ export function createTelemetryPanel(handlers: TelemetryHandlers): TelemetryPane
         el('div', { class: 'tm-grid-4' }, [roll.root, pitch.root, yaw.root, attError.root]),
       ]),
 
-      el('div', { class: 'tm-section' }, [
+      el('div', { class: 'tm-section tm-traces' }, [
         el('div', { class: 'spark-row' }, [
           el('div', { class: 'label' }, ['Temp C']),
           tempSpark.svg,
