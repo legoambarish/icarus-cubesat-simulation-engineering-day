@@ -18,7 +18,7 @@
  * --------------------------------------------------------
  *  orbit    circular: r = Re+h, v = sqrt(mu/r), T = 2pi sqrt(r^3/mu)
  *  eclipse  cylindrical Earth-shadow test against the true Sun direction
- *  solar    P = P_max * illumination * pointing_efficiency
+ *  solar    P = P_max * illumination * cos(pointing_error)
  *  battery  dB/dt = (P_solar - P_load) / E_capacity, clamped 0..100 %
  *  thermal  first order: dT/dt = (T_eq - T)/tau + Q_anomaly/C
  *  vibration baseline + deterministic noise + ADCS/anomaly excitation
@@ -369,10 +369,10 @@ export class BrowserFsw {
     this.wheelActivity = this.wheelActivity * 0.85 + adcs.wheelActivity * 0.15;
 
     /* ---- 4. power -------------------------------------------------------
-     * Solar generation couples to attitude: an off-pointed array sees less
-     * Sun. Bounded to [0.35, 1] of peak so a tumble degrades but never kills
-     * generation, which keeps the demo readable.                           */
-    const pointingEfficiency = 0.35 + 0.65 * Math.max(0, Math.cos(Math.min(errRad, Math.PI / 2)));
+     * Solar generation couples to both eclipse geometry and attitude. A panel
+     * produces its peak at normal incidence and follows the projected-area
+     * cosine law as the spacecraft points away from the Sun.                    */
+    const pointingEfficiency = Math.max(0, Math.cos(Math.min(errRad, Math.PI / 2)));
     this.solarW = SOLAR_PEAK_W * this.illumination * pointingEfficiency;
 
     const safeMode = this.state === 'SAFE_MODE';
@@ -571,7 +571,10 @@ export class BrowserFsw {
       },
       thermal: { temperature_c: round(this.temperatureC, 2) },
       vibration: { g: round(this.vibrationG, 4) },
-      environment: { eclipse: this.eclipse },
+      environment: {
+        eclipse: this.eclipse,
+        illumination_pct: round(this.illumination * 100, 1),
+      },
       fault: { active: this.faultActive, code: this.faultCode, message: this.faultMessage },
       state: this.state,
     };

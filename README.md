@@ -209,7 +209,29 @@ Each telemetry packet contains:
 - orbit, attitude, power, thermal, vibration, environment, fault, and state objects
 
 Units are encoded in field names such as `_km`, `_km_s`, `_deg`, `_pct`, `_w`, `_c`, and
-`_min`. Missing values are represented as `null`; fields are not silently omitted.
+`_min`. Missing values are represented as `null`; fields are not silently omitted. The
+current packet schema is version `2`; it adds the continuous `environment.illumination_pct`
+field used by the ground display and Open MCT.
+
+### How the live readouts are coupled
+
+The telemetry plate is fed from one simulator state. The main values in the display are
+not independent counters:
+
+| Readout | Model relationship |
+| --- | --- |
+| `SOLAR` | `9.4 W peak × illumination fraction × cos(pointing error)`; clipped at zero when the array is edge-on or back-facing |
+| `LOAD` | `5.4 W nominal + reaction-wheel draw while ADCS is active + injected parasitic fault load`; safe mode sheds to `1.9 W` |
+| `VIBRATION` | Low-pass filtered baseline/noise plus reaction-wheel activity and anomaly excitation |
+| `ILLUM` | Eclipse geometry, reported as `0–100 %`; a short terminator ramp avoids a discontinuous power jump |
+| `ROLL`, `PITCH`, `YAW` | Current quaternion converted to ZYX Euler angles; commands and disturbances are flown through the controller |
+| `POINT ERR` | Angular distance between current and commanded attitude; it drives the solar projection term and ADCS state |
+
+The result is a useful engineering demonstrator rather than flight-qualified flight
+software. The solar projection follows the cosine dependence described in NASA's small
+spacecraft power reference, while the attitude side uses a deliberately readable
+reaction-wheel control model. See the source comments in `src/fsw/browserFsw.ts` and
+`fsw/src/power.c` before changing constants.
 
 The supported commands are:
 

@@ -11,9 +11,8 @@
  *     power curve is continuous.
  *
  *     `pointing_efficiency` couples the arrays to the attitude. An off-pointed
- *     spacecraft sees less Sun. It is bounded to [0.35, 1] so a tumble degrades
- *     generation without killing it - the telemetry stays readable, and the
- *     relationship is still visible on screen.
+ *     spacecraft sees less projected area, so generation follows the cosine of
+ *     the pointing error and reaches zero when the panel is edge-on/back-facing.
  *
  *   LOAD
  *     nominal, plus the ADCS draw while the wheel is working, plus any
@@ -40,7 +39,8 @@ void power_update(IcarusState *s, double dt_mission)
     /* ---- generation ---------------------------------------------------- */
     error_rad = s->attitude_error_deg * DEG2RAD;
     if (error_rad > PI / 2.0) error_rad = PI / 2.0;
-    pointing_efficiency = 0.35 + 0.65 * cos(error_rad);
+    pointing_efficiency = cos(error_rad);
+    if (pointing_efficiency < 0.0) pointing_efficiency = 0.0;
 
     s->solar_w = SOLAR_PEAK_W * s->illumination * pointing_efficiency;
 

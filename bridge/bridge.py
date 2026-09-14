@@ -66,7 +66,7 @@ LOG = logging.getLogger("icarus.bridge")
 # The telemetry contract. Mirrors src/state/types.ts and fsw/src/telemetry.c.
 # --------------------------------------------------------------------------
 
-TELEMETRY_SCHEMA_VERSION: Final = 1
+TELEMETRY_SCHEMA_VERSION: Final = 2
 
 KNOWN_STATES: Final = frozenset(
     {
@@ -100,6 +100,7 @@ RANGES: Final[dict[str, tuple[float, float]]] = {
     "power.load_w": (0.0, 200.0),
     "thermal.temperature_c": (-200.0, 300.0),
     "vibration.g": (0.0, 50.0),
+    "environment.illumination_pct": (0.0, 100.0),
 }
 
 # The command whitelist. Keep in step with src/state/types.ts
@@ -152,7 +153,7 @@ def validate_packet(raw: Any) -> tuple[dict[str, Any] | None, str]:
     if not isinstance(raw, dict):
         return None, "not a JSON object"
 
-    version = raw.get("telemetry_schema_version", 1)
+    version = raw.get("telemetry_schema_version", TELEMETRY_SCHEMA_VERSION)
     if version != TELEMETRY_SCHEMA_VERSION:
         return None, f"unsupported schema version {version!r}"
 
@@ -255,6 +256,9 @@ def validate_packet(raw: Any) -> tuple[dict[str, Any] | None, str]:
     eclipse_raw = env_in.get("eclipse")
     if not isinstance(eclipse_raw, bool) and eclipse_raw not in (0, 1):
         return None, "environment.eclipse invalid"
+    illumination_pct = _num(env_in, "illumination_pct", "environment.illumination_pct")
+    if illumination_pct is None:
+        return None, "environment.illumination_pct invalid"
 
     # ---- fault ----------------------------------------------------------
     fault_in = raw.get("fault")
@@ -290,7 +294,10 @@ def validate_packet(raw: Any) -> tuple[dict[str, Any] | None, str]:
             "power": {"battery_pct": battery, "solar_w": solar, "load_w": load},
             "thermal": {"temperature_c": temperature},
             "vibration": {"g": vibration},
-            "environment": {"eclipse": bool(eclipse_raw)},
+            "environment": {
+                "eclipse": bool(eclipse_raw),
+                "illumination_pct": illumination_pct,
+            },
             "fault": fault,
             "state": state,
         },

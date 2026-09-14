@@ -133,7 +133,7 @@ describe('telemetry validation - rejections', () => {
     }
   });
 
-  reject((r) => { r.telemetry_schema_version = 2; }, 'an unsupported schema version');
+  reject((r) => { r.telemetry_schema_version = 3; }, 'an unsupported schema version');
   reject((r) => { delete r.timestamp; }, 'a missing timestamp');
   reject((r) => { r.timestamp = NaN; }, 'a NaN timestamp');
   reject((r) => { r.timestamp = Infinity; }, 'an infinite timestamp');
@@ -158,6 +158,7 @@ describe('telemetry validation - rejections', () => {
   reject((r) => { (r.thermal as Record<string, unknown>).temperature_c = 5000; }, 'an absurd temperature');
   reject((r) => { (r.vibration as Record<string, unknown>).g = -1; }, 'negative vibration');
   reject((r) => { (r.environment as Record<string, unknown>).eclipse = 'yes'; }, 'a string eclipse flag');
+  reject((r) => { (r.environment as Record<string, unknown>).illumination_pct = 101; }, 'illumination above 100 %');
   reject(
     (r) => { (r.attitude as Record<string, unknown>).angular_velocity_deg_s = [0, NaN, 0]; },
     'a NaN body rate',
@@ -415,7 +416,7 @@ describe('the two simulators agree', () => {
   it('shares one packet shape between BROWSER-FSW and the C OBC contract', () => {
     // A packet the C OBC would emit, built by hand from its serialiser format.
     const fromC: TelemetryPacket = {
-      telemetry_schema_version: 1,
+      telemetry_schema_version: TELEMETRY_SCHEMA_VERSION,
       timestamp: 1_757_940_000.25,
       source: 'ICARUS-OBC',
       satellite: 'ICARUS-1U',
@@ -430,7 +431,7 @@ describe('the two simulators agree', () => {
       power: { battery_pct: 82.4, solar_w: 8.18, load_w: 5.4 },
       thermal: { temperature_c: 28.4 },
       vibration: { g: 0.012 },
-      environment: { eclipse: false },
+      environment: { eclipse: false, illumination_pct: 100 },
       fault: { active: false, code: null, message: null },
       state: 'NOMINAL',
     };

@@ -148,7 +148,7 @@ int telemetry_serialize(const IcarusState *s, char *buf, int buf_len)
         "},"
         "\"thermal\":{\"temperature_c\":%.2f},"
         "\"vibration\":{\"g\":%.4f},"
-        "\"environment\":{\"eclipse\":%s},"
+        "\"environment\":{\"eclipse\":%s,\"illumination_pct\":%.1f},"
         "\"fault\":{%s},"
         "\"state\":\"%s\""
         "}",
@@ -163,7 +163,7 @@ int telemetry_serialize(const IcarusState *s, char *buf, int buf_len)
         s->battery_pct, s->solar_w, s->load_w,
         s->temperature_c,
         s->vibration_g,
-        s->eclipse ? "true" : "false",
+        s->eclipse ? "true" : "false", s->illumination * 100.0,
         fault_block,
         flight_state_name(s->state));
 

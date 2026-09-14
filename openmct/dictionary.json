@@ -142,6 +142,15 @@
       ]
     },
     {
+      "name": "Illumination",
+      "key": "environment.illumination_pct",
+      "units": "%",
+      "values": [
+        { "key": "value", "name": "Value", "units": "%", "format": "float", "min": 0, "max": 100, "hints": { "range": 1 } },
+        { "key": "utc", "source": "timestamp", "name": "Time", "format": "utc", "hints": { "domain": 1 } }
+      ]
+    },
+    {
       "name": "Fault code",
       "key": "fault.code",
       "values": [

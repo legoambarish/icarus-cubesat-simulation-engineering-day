@@ -119,7 +119,7 @@ async def main() -> int:
             packet = await read_packet(ws)
             check("packet received over the WebSocket", isinstance(packet, dict))
             check("source is the C OBC", packet.get("source") == "ICARUS-OBC", str(packet.get("source")))
-            check("schema version is 1", packet.get("telemetry_schema_version") == 1)
+            check("schema version is 2", packet.get("telemetry_schema_version") == 2)
             check(
                 "every contract block is present",
                 all(k in packet for k in
@@ -129,6 +129,12 @@ async def main() -> int:
                 "bridge back-filled period_min",
                 isinstance(packet["orbit"].get("period_min"), (int, float)),
                 f"{packet['orbit'].get('period_min'):.2f} min",
+            )
+            check(
+                "illumination percentage is in range",
+                isinstance(packet["environment"].get("illumination_pct"), (int, float))
+                and 0 <= packet["environment"]["illumination_pct"] <= 100,
+                str(packet["environment"].get("illumination_pct")),
             )
 
             print("\n== 2. malformed UDP is rejected and never forwarded ==")

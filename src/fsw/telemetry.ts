@@ -45,6 +45,7 @@ const RANGE = {
   load_w: [0, 200],
   temperature_c: [-200, 300],
   vibration_g: [0, 50],
+  illumination_pct: [0, 100],
 } as const;
 
 const FAULT_CODES: readonly string[] = ['THERMAL_LIMIT', 'BATTERY_CRITICAL', 'ATTITUDE_ERROR'];
@@ -71,7 +72,9 @@ function num(v: unknown, lo: number, hi: number): number | null {
 export function validateTelemetryPacket(raw: unknown): ValidationResult {
   if (!isObject(raw)) return { ok: false, reason: 'packet is not a JSON object' };
 
-  const version = typeof raw.telemetry_schema_version === 'number' ? raw.telemetry_schema_version : 1;
+  const version = typeof raw.telemetry_schema_version === 'number'
+    ? raw.telemetry_schema_version
+    : TELEMETRY_SCHEMA_VERSION;
   if (version !== TELEMETRY_SCHEMA_VERSION) {
     return { ok: false, reason: `unsupported telemetry_schema_version ${String(version)}` };
   }
@@ -142,6 +145,10 @@ export function validateTelemetryPacket(raw: unknown): ValidationResult {
     return { ok: false, reason: 'environment.eclipse invalid' };
   }
   const eclipse = eclipseRaw === true || eclipseRaw === 1;
+  const illumination_pct = num(raw.environment.illumination_pct, ...RANGE.illumination_pct);
+  if (illumination_pct === null) {
+    return { ok: false, reason: 'environment.illumination_pct invalid' };
+  }
 
   /* ---- fault ---------------------------------------------------------- */
   let fault = { active: false, code: null as FaultCode | null, message: null as string | null };
@@ -173,7 +180,7 @@ export function validateTelemetryPacket(raw: unknown): ValidationResult {
       power: { battery_pct, solar_w, load_w },
       thermal: { temperature_c },
       vibration: { g: vibration_g },
-      environment: { eclipse },
+      environment: { eclipse, illumination_pct },
       fault,
       state: stateRaw as FlightState,
     },
@@ -207,7 +214,7 @@ export function bootPacket(now = Date.now() / 1000): TelemetryPacket {
     power: { battery_pct: 82, solar_w: 0, load_w: 0 },
     thermal: { temperature_c: 18 },
     vibration: { g: 0.01 },
-    environment: { eclipse: false },
+    environment: { eclipse: false, illumination_pct: 100 },
     fault: { active: false, code: null, message: null },
     state: 'BOOT',
   };

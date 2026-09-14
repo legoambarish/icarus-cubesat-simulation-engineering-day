@@ -20,7 +20,7 @@
  *    validateTelemetryPacket() how to upgrade the old shape.
  */
 
-export const TELEMETRY_SCHEMA_VERSION = 1;
+export const TELEMETRY_SCHEMA_VERSION = 2;
 
 /** Where a packet came from. Displayed to the user, never inferred later. */
 export type TelemetrySourceId = 'ICARUS-OBC' | 'BROWSER-FSW';
@@ -95,6 +95,8 @@ export interface VibrationTelemetry {
 
 export interface EnvironmentTelemetry {
   eclipse: boolean;
+  /** Percentage of incident sunlight after the eclipse geometry model (0..100). */
+  illumination_pct: number;
 }
 
 export interface FaultTelemetry {

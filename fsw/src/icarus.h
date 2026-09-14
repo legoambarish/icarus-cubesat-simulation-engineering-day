@@ -21,7 +21,7 @@
 #include <stdint.h>
 
 /* ---- schema ------------------------------------------------------------ */
-#define TELEMETRY_SCHEMA_VERSION 1
+#define TELEMETRY_SCHEMA_VERSION 2
 #define SATELLITE_ID             "ICARUS-1U"
 #define TELEMETRY_SOURCE         "ICARUS-OBC"
 

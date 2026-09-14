@@ -172,7 +172,7 @@ describe('telemetry packet production', () => {
   it('emits a complete, contract-shaped packet from the first snapshot', () => {
     const fsw = makeFsw();
     const { packet } = fsw.snapshot();
-    expect(packet.telemetry_schema_version).toBe(1);
+    expect(packet.telemetry_schema_version).toBe(2);
     expect(packet.source).toBe('BROWSER-FSW');
     expect(packet.satellite).toBe('ICARUS-1U');
     expect(Object.keys(packet.fault).sort()).toEqual(['active', 'code', 'message']);
@@ -273,6 +273,37 @@ describe('eclipse drives power and thermal', () => {
     }
     expect(minEclipseSolar).toBeLessThan(0.01);
     expect(maxSunlitSolar).toBeGreaterThan(4);
+  });
+
+  it('reports the continuous illumination fraction that drives solar input', () => {
+    const fsw = makeFsw();
+    let sawDark = false;
+    let sawFull = false;
+    let sawRamp = false;
+    for (let i = 0; i < 1600; i++) {
+      fsw.advance(SIM_STEP_S);
+      const p = fsw.snapshot().packet;
+      const illumination = p.environment.illumination_pct;
+      expect(illumination).toBeGreaterThanOrEqual(0);
+      expect(illumination).toBeLessThanOrEqual(100);
+      if (illumination === 0) sawDark = true;
+      if (illumination === 100) sawFull = true;
+      if (illumination > 0 && illumination < 100) sawRamp = true;
+    }
+    expect(sawDark).toBe(true);
+    expect(sawFull).toBe(true);
+    expect(sawRamp).toBe(true);
+  });
+
+  it('reduces solar generation with pointing error using projected area', () => {
+    const fsw = makeFsw({ batteryPct: 84 });
+    fsw.advance(SIM_STEP_S);
+    const nominal = fsw.snapshot().packet.power.solar_w;
+    fsw.setTargetAttitude(60, 0, 0);
+    fsw.advance(SIM_STEP_S);
+    const offPointed = fsw.snapshot().packet;
+    expect(offPointed.attitude.target_error_deg).toBeGreaterThan(30);
+    expect(offPointed.power.solar_w).toBeLessThan(nominal);
   });
 
   it('reverses the battery trend across the terminator', () => {

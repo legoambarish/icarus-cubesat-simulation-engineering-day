@@ -8,8 +8,8 @@
  * Layout, top to bottom:
  *   head            flight state, colour-coded, plus the telemetry source
  *   tapes           battery and bus temperature, each on a scale tape
- *   bus row         solar / load / vibration / illumination
- *   attitude bank   roll / pitch / yaw / pointing error
+ *   bus row         SOLAR / LOAD / VIBRATION / ILLUM
+ *   attitude bank   ROLL / PITCH / YAW / POINT ERR
  *   traces          temperature and vibration on a graticule
  *   alert line      the active fault, or an explicit "no active alert"
  *   command deck    altitude, inclination, roll, and the four actions
@@ -137,14 +137,14 @@ export function createTelemetryPanel(handlers: TelemetryHandlers): TelemetryPane
   /* ---- bus row --------------------------------------------------------- */
   const solar = readout('Solar', { size: 'sm' });
   const load = readout('Load', { size: 'sm' });
-  const vibration = readout('Vib', { size: 'sm' });
+  const vibration = readout('Vibration', { size: 'sm' });
   const illumination = readout('Illum', { size: 'sm' });
 
   /* ---- attitude bank --------------------------------------------------- */
   const roll = readout('Roll', { size: 'sm' });
   const pitch = readout('Pitch', { size: 'sm' });
   const yaw = readout('Yaw', { size: 'sm' });
-  const attError = readout('Err', { size: 'sm' });
+  const attError = readout('Point Err', { size: 'sm' });
 
   /* ---- traces ---------------------------------------------------------- */
   const tempSpark = createSparkline({
@@ -288,15 +288,19 @@ export function createTelemetryPanel(handlers: TelemetryHandlers): TelemetryPane
       load.setValue(fmt(t.power.load_w, 2), 'W');
       setStateClass(vibration.value, 'value sm', vibrationSeverity(t.vibration.g));
       vibration.setValue(fmt(t.vibration.g, 3), 'g');
-      setStateClass(illumination.value, 'value sm', t.environment.eclipse ? 'dim' : 'nominal');
-      illumination.setValue(t.environment.eclipse ? 'ECLIPSE' : 'SUNLIT');
+      setStateClass(
+        illumination.value,
+        'value sm',
+        t.environment.illumination_pct <= 0 ? 'dim' : 'nominal',
+      );
+      illumination.setValue(fmt(t.environment.illumination_pct, 0), '%');
 
       /* ---- attitude ---- */
-      roll.setValue(fmtSigned(t.attitude.roll_deg, 1));
-      pitch.setValue(fmtSigned(t.attitude.pitch_deg, 1));
-      yaw.setValue(fmtSigned(t.attitude.yaw_deg, 1));
+      roll.setValue(fmtSigned(t.attitude.roll_deg, 1), '°');
+      pitch.setValue(fmtSigned(t.attitude.pitch_deg, 1), '°');
+      yaw.setValue(fmtSigned(t.attitude.yaw_deg, 1), '°');
       setStateClass(attError.value, 'value sm', attitudeErrorSeverity(t.attitude.target_error_deg));
-      attError.setValue(fmt(t.attitude.target_error_deg, 1));
+      attError.setValue(fmt(t.attitude.target_error_deg, 1), '°');
 
       setText(tempSparkVal, fmt(t.thermal.temperature_c, 1));
       setText(vibSparkVal, fmt(t.vibration.g, 3));

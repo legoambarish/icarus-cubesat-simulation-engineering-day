@@ -97,7 +97,7 @@ def main() -> int:
         p = recv()
         check("all top-level fields present", all(k in p for k in REQUIRED_FIELDS),
               ",".join(sorted(set(REQUIRED_FIELDS) - set(p))) or "ok")
-        check("schema version is 1", p["telemetry_schema_version"] == 1)
+        check("schema version is 2", p["telemetry_schema_version"] == 2)
         check("source is ICARUS-OBC", p["source"] == "ICARUS-OBC", str(p["source"]))
         check("satellite is ICARUS-1U", p["satellite"] == "ICARUS-1U")
         check("state is a known flight state", p["state"] in KNOWN_STATES, str(p["state"]))
@@ -106,6 +106,9 @@ def main() -> int:
               isinstance(p["attitude"]["angular_velocity_deg_s"], list)
               and len(p["attitude"]["angular_velocity_deg_s"]) == 3)
         check("load_w is reported", isinstance(p["power"].get("load_w"), (int, float)))
+        check("illumination_pct is reported",
+              isinstance(p["environment"].get("illumination_pct"), (int, float))
+              and 0 <= p["environment"]["illumination_pct"] <= 100)
 
         print("\n== 2. circular-orbit equations at the 500 km reference ==")
         o = p["orbit"]
